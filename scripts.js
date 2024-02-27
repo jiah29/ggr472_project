@@ -308,6 +308,7 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
     };
   });
 
+  // then add the GeoJSON feature collection as a source and layer to the map
   map.addSource('bike-share-data', {
     type: 'geojson',
     data: {
