@@ -21,7 +21,7 @@ body {
     height: 93%; /* 93% of the viewport height - the rest for the navbar */
     width: 100%;
     position: relative;
-    left: 12px;
+    margin: 0;
 
     /* styling for the sidebar */
     #sidebar {
