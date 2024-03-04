@@ -1,5 +1,5 @@
 /** ========================================================================= */
-/** Stylesheet for both index.html and resource.html                          */
+/** Stylesheet for both index.html and resources.html                         */
 /** Created by Jia Hao Choo, Runyi Li & Saning Zhang                          */
 /** for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)               */
 /** ========================================================================= */
@@ -16,7 +16,7 @@ body {
     height: 7%; /* 7% of the viewport height - the rest for the main content */
   }
 
-  /* styling for the main content section (below navbar) */
+  /* styling for the main content section (below navbar) in index.html page*/
   #main {
     height: 93%; /* 93% of the viewport height - the rest for the navbar */
     width: 100%;
@@ -40,5 +40,13 @@ body {
         height: 100%;
       }
     }
+  }
+
+  /* styling for the resource content section (below navbar) in resources.html page*/
+  #resource {
+    position: relative;
+    margin: 0;
+    height: 93%; /* 93% of the viewport height - the rest for the navbar */
+    padding: 20px;
   }
 }
