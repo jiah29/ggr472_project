@@ -17,7 +17,7 @@ const map = new mapboxgl.Map({
 map.on('load', function () {
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
-  addSchoolsSourceAndLayer((visible = false));
+  addSchoolsSourceAndLayer((visible = true));
   addPedestrianNetworkSourceAndLayer((visible = false));
   addCyclingNetworkSourceAndLayer((visible = false));
   addSubwayStationsSourceAndLayer((visible = false));
