@@ -23,8 +23,8 @@ body {
     left: 12px;
 
     #sidebar {
-      padding-right: 0;
-      padding-left: 0;
+      padding-right: 10px;
+      padding-left: 10px;
     }
 
     /** styling for the map container */
