@@ -4,14 +4,38 @@
 /** for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)               */
 /** ========================================================================= */
 
-/** TEMP MAP CONTAINER STYLING - MODIFY WHEN READY */
-.map-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 90%;
-  height: 90%;
-  margin: auto;
-  right: 0px;
-  left: 0px;
+/* General styling for body */
+body {
+  height: 100vh;
+  width: 100vw;
+
+  /* styling for the navbar */
+  .navbar {
+    width: 100%;
+    height: 7%;
+  }
+
+  /* styling for the main content section (below navbar) */
+  #main {
+    height: 93%;
+    width: 100%;
+    position: relative;
+    left: 12px;
+
+    #sidebar {
+      padding-right: 0;
+      padding-left: 0;
+    }
+
+    /** styling for the map container */
+    #map-content {
+      padding-left: 0;
+      padding-right: 0;
+
+      .map-container {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
 }
