@@ -1,5 +1,5 @@
 // ============================================================================
-// Script used for index.html to control data layers on the map
+// Script used for index.html to set up map controls and control map data layers
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
@@ -12,9 +12,22 @@ const map = new mapboxgl.Map({
   style: 'mapbox://styles/jiahao29/clstm27z5002r01pcaess7gk8',
   center: [-79.370729, 43.719518],
   zoom: 10,
+  preserveDrawingBuffer: true,
 });
 
 map.on('load', function () {
+  // Add a scale control to the map
+  map.addControl(new mapboxgl.ScaleControl(), 'bottom-right');
+
+  // Add zoom and rotation controls to the map.
+  map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+  // Add map export control to the map
+  addExportControl(map);
+
+  // Add draw tools and controls to the map
+  map.addControl(new MapboxDraw(), 'bottom-right');
+
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
   addSchoolsSourceAndLayer((visible = true));
@@ -353,4 +366,54 @@ function toggleDynamicBikeShareLayerVisibility(visible) {
   }
   // show or hide the layer in the legend
   toggleLayerLegend('bike-share-stations', visible);
+}
+
+// ============================================================================
+// Functions to add a custom map export control
+// ============================================================================
+
+// Function to add custom map export control to the map
+// map: the Mapbox map object
+function addExportControl(map) {
+  // define a custom ExportControl class per
+  // documentation in https://docs.mapbox.com/mapbox-gl-js/api/markers/#icontrol
+  class ExportControl {
+    onAdd(map) {
+      this._map = map;
+      this._container = document.createElement('div');
+      this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+      this._container.innerHTML = `<button>
+                                     <i class="fa-solid fa-print"></i>
+                                   </button>`;
+      this._container.addEventListener('click', () => exportMapImage());
+      return this._container;
+    }
+
+    onRemove() {
+      this._container.parentNode.removeChild(this._container);
+      this._map = undefined;
+    }
+  }
+  // add the custom export control to the map
+  map.addControl(new ExportControl(), 'bottom-right');
+}
+
+// Function for the map export functionality
+function exportMapImage() {
+  // get the map canvas
+  const canvas = map.getCanvas();
+
+  // create a new image element and set its source to the map canvas
+  const img = new Image();
+  img.src = canvas.toDataURL('image/png');
+
+  // download the image by creating a new <a> element
+  const link = document.createElement('a');
+  link.href = img.src;
+  link.download = 'map-export.png';
+  link.click();
+
+  // remove the image and link elements after the download
+  img.remove();
+  link.remove();
 }

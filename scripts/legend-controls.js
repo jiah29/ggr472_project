@@ -9,7 +9,6 @@
 // layer: id of the mapbox layer
 // visible: boolean indicating if the layer is visible
 function toggleLayerLegend(layer, visible) {
-  console.log(layer, visible);
   if (layer != 'cycling-network' && layer != 'pedestrian-network') {
     // if the layer is not a line layer, it is an icon layer
     // so call the toggleIconLegend function
