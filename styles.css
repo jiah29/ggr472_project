@@ -33,11 +33,32 @@ body {
     #map-content {
       padding-left: 0;
       padding-right: 0;
+      /* Change position to relative to allow absolute positioning of legend */
+      position: relative;
 
       /* styling for the map container */
       .map-container {
         width: 100%;
         height: 100%;
+      }
+
+      /* Styling for legend container*/
+      .legend-container {
+        /** background color for legend */
+        background-color: #ffffff;
+        /** overlap legend on top of map */
+        z-index: 2;
+        /* absolute positioning relative to main content */
+        position: absolute;
+        bottom: 50px;
+        left: 20px;
+        /** padding inside legend container */
+        padding: 10px;
+        /** border for legend container */
+        border: 1px solid #000000;
+        border-radius: 5px;
+        /** by default, hide the legend */
+        display: none;
       }
     }
   }

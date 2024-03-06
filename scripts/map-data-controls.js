@@ -1,5 +1,5 @@
 // ============================================================================
-// Script used for both index.html and suggestions.html
+// Script used for index.html to set up map controls and control map data layers
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
@@ -12,9 +12,31 @@ const map = new mapboxgl.Map({
   style: 'mapbox://styles/jiahao29/clstm27z5002r01pcaess7gk8',
   center: [-79.370729, 43.719518],
   zoom: 10,
+  preserveDrawingBuffer: true,
 });
 
 map.on('load', function () {
+  // Add a scale control to the map
+  map.addControl(new mapboxgl.ScaleControl(), 'bottom-right');
+
+  // Add zoom and rotation controls to the map.
+  map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+  // Add map export control to the map
+  addExportControl(map);
+
+  // Add draw tools and controls to the map
+  const drawControl = new MapboxDraw({
+    // do not allow displaying all default controls
+    displayControlsDefault: false,
+    // only allow drawing of lines and the ability to delete
+    controls: {
+      line_string: true,
+      trash: true,
+    },
+  });
+  map.addControl(drawControl, 'bottom-right');
+
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
   addSchoolsSourceAndLayer((visible = true));
@@ -23,17 +45,17 @@ map.on('load', function () {
   addSubwayStationsSourceAndLayer((visible = false));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
-  addWatchYourSpeedProgramSourceAndLayer((visible = false));
+  addWatchYourSpeedProgramSourceAndLayer((visible = true));
   addParksSourceAndLayer((visible = false));
 
   // add dynamic data for bike share stations
   fetchCurrentBikeShareData().then((bikeShareData) => {
-    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
+    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
 });
 
 // ============================================================================
-// Group of helper functions to add vector tile sources and layers to the map
+// Group of helper functions to add static vector tile sources and layers to the map
 // Common parameters:
 // visible: true or false (used to determine if the layer should be visible by default)
 // ============================================================================
@@ -57,6 +79,8 @@ function addSchoolsSourceAndLayer(visible) {
     minzoom: 9,
     maxzoom: 22,
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('schools', visible);
 }
 
 // Add sources and layers for pedestrian network
@@ -81,6 +105,8 @@ function addPedestrianNetworkSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('pedestrian-network', visible);
 }
 
 // Add sources and layers for cycling network
@@ -105,6 +131,8 @@ function addCyclingNetworkSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('cycling-network', visible);
 }
 
 // Add sources and layers for subway stations
@@ -126,6 +154,8 @@ function addSubwayStationsSourceAndLayer(visible) {
     minzoom: 9,
     maxzoom: 22,
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('subway-stations', visible);
 }
 
 // Add sources and layers for traffic calming measures locations
@@ -147,6 +177,8 @@ function addTrafficCalmingSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('traffic-calming', visible);
 }
 
 // Add sources and layers for automated speed enforcement locations
@@ -168,6 +200,8 @@ function addSpeedEnforcementSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('speed-enforcement', visible);
 }
 
 // Add sources and layers for Watch Your Speed program locations
@@ -177,7 +211,7 @@ function addWatchYourSpeedProgramSourceAndLayer(visible) {
     url: 'mapbox://jiahao29.9yvzrd8v',
   });
   map.addLayer({
-    id: 'watch-your-speed',
+    id: 'watch-your-speed-program',
     type: 'symbol',
     source: 'watch-your-speed-data',
     'source-layer': 'Watch_Your_Speed_Program_Sign-2bje7e',
@@ -189,6 +223,8 @@ function addWatchYourSpeedProgramSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('watch-your-speed-program', visible);
 }
 
 // Add sources and layers for parks
@@ -210,40 +246,16 @@ function addParksSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('parks', visible);
 }
 
 // ============================================================================
-// Miscellaneous helper functions
+// Functions to add dynamic sources and layers to the map that require
+// fetching data from an API
 // ============================================================================
 
-// Function to toggle the visibility of a static layer
-// layer: the layer id
-// visible: true or false
-function toggleStaticLayerVisibility(layer, visible) {
-  if (visible) {
-    map.setLayoutProperty(layer, 'visibility', 'visible');
-  } else {
-    map.setLayoutProperty(layer, 'visibility', 'none');
-  }
-}
-
-// Function to toggle the visibility of the dynamic bike share stations layer
-// visible: true or false
-function toggleDynamicBikeShareLayerVisibility(visible) {
-  if (visible) {
-    // need to fetch the current bike share data first then add the layer
-    fetchCurrentBikeShareData().then((bikeShareData) => {
-      addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
-    });
-  } else {
-    // simply remove the layer if it exists
-    if (map.getLayer('bike-share-stations')) {
-      map.removeLayer('bike-share-stations');
-    }
-  }
-}
-
-// Function to fetch the current bike share station data and status
+// Function to fetch the up-to-date current bike share station data and status
 // returns a promise that resolves to an array of bike share station data
 function fetchCurrentBikeShareData() {
   var bikeShareData = []; // array to store bike share station data
@@ -326,4 +338,91 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+  // show or hide layer in legend based on visible argument
+  toggleLayerLegend('bike-share-stations', visible);
+}
+
+// ============================================================================
+// Functions to toggle the visibility of static and dynamic layers
+// ============================================================================
+
+// Function to toggle the visibility of a static layer
+// layer: the layer id
+// visible: true or false
+function toggleStaticLayerVisibility(layer, visible) {
+  if (visible) {
+    map.setLayoutProperty(layer, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(layer, 'visibility', 'none');
+  }
+  // show or hide the layer in the legend
+  toggleLayerLegend(layer, visible);
+}
+
+// Function to toggle the visibility of the dynamic bike share stations layer
+// visible: true or false
+function toggleDynamicBikeShareLayerVisibility(visible) {
+  if (visible) {
+    // need to fetch the current bike share data first then add the layer
+    fetchCurrentBikeShareData().then((bikeShareData) => {
+      addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
+    });
+  } else {
+    // simply remove the layer if it exists
+    if (map.getLayer('bike-share-stations')) {
+      map.removeLayer('bike-share-stations');
+    }
+  }
+  // show or hide the layer in the legend
+  toggleLayerLegend('bike-share-stations', visible);
+}
+
+// ============================================================================
+// Functions to add a custom map export control
+// ============================================================================
+
+// Function to add custom map export control to the map
+// map: the Mapbox map object
+function addExportControl(map) {
+  // define a custom ExportControl class per
+  // documentation in https://docs.mapbox.com/mapbox-gl-js/api/markers/#icontrol
+  class ExportControl {
+    onAdd(map) {
+      this._map = map;
+      this._container = document.createElement('div');
+      this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+      this._container.innerHTML = `<button>
+                                     <i class="fa-solid fa-print"></i>
+                                   </button>`;
+      this._container.addEventListener('click', () => exportMapImage());
+      return this._container;
+    }
+
+    onRemove() {
+      this._container.parentNode.removeChild(this._container);
+      this._map = undefined;
+    }
+  }
+  // add the custom export control to the map
+  map.addControl(new ExportControl(), 'bottom-right');
+}
+
+// Function for the map export functionality
+function exportMapImage() {
+  // get the map canvas
+  const canvas = map.getCanvas();
+
+  // create a new image element and set its source to the map canvas
+  const img = new Image();
+  img.src = canvas.toDataURL('image/png');
+
+  // download the image by creating a new <a> element
+  const link = document.createElement('a');
+  link.href = img.src;
+  link.download = 'map-export.png';
+  link.click();
+
+  // remove the image and link elements after the download
+  img.remove();
+  link.remove();
 }
