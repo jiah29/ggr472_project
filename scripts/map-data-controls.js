@@ -26,18 +26,16 @@ map.on('load', function () {
   addExportControl(map);
 
   // Add draw tools and controls to the map
-  map.addControl(
-    new MapboxDraw({
-      // do not allow displaying all default controls
-      displayControlsDefault: false,
-      // only allow drawing of lines and the ability to delete
-      controls: {
-        line_string: true,
-        trash: true,
-      },
-    }),
-    'bottom-right',
-  );
+  const drawControl = new MapboxDraw({
+    // do not allow displaying all default controls
+    displayControlsDefault: false,
+    // only allow drawing of lines and the ability to delete
+    controls: {
+      line_string: true,
+      trash: true,
+    },
+  });
+  map.addControl(drawControl, 'bottom-right');
 
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
