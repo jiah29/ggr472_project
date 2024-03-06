@@ -1,17 +1,52 @@
 /** ========================================================================= */
-/** Stylesheet for both index.html and resource.html                          */
+/** Stylesheet for both index.html and resources.html                         */
 /** Created by Jia Hao Choo, Runyi Li & Saning Zhang                          */
 /** for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)               */
 /** ========================================================================= */
 
-/** TEMP MAP CONTAINER STYLING - MODIFY WHEN READY */
-.map-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 90%;
-  height: 90%;
-  margin: auto;
-  right: 0px;
-  left: 0px;
+/* General styling for body */
+body {
+  /** make the body take up the entire viewport */
+  height: 100vh;
+  width: 100vw;
+
+  /* styling for the navbar */
+  .navbar {
+    width: 100%;
+    height: 7%; /* 7% of the viewport height - the rest for the main content */
+  }
+
+  /* styling for the main content section (below navbar) in index.html page*/
+  #main {
+    height: 93%; /* 93% of the viewport height - the rest for the navbar */
+    width: 100%;
+    position: relative;
+    margin: 0;
+
+    /* styling for the sidebar */
+    #sidebar {
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+
+    /** styling for the map content section */
+    #map-content {
+      padding-left: 0;
+      padding-right: 0;
+
+      /* styling for the map container */
+      .map-container {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  /* styling for the resource content section (below navbar) in resources.html page*/
+  #resource {
+    position: relative;
+    margin: 0;
+    height: 93%; /* 93% of the viewport height - the rest for the navbar */
+    padding: 20px;
+  }
 }
