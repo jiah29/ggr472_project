@@ -66,7 +66,7 @@ function toggleIconLegend(layer, visible) {
     legendItem.appendChild(legendLabel);
 
     // add legend item to legend container
-    document.getElementById('legend').appendChild(legendItem);
+    insertLegendItem(legendItem);
   }
 }
 
@@ -117,7 +117,7 @@ function toggleLineLegend(layer, visible) {
     legendItem.appendChild(legendLabel);
 
     // add legend item to legend container
-    document.getElementById('legend').appendChild(legendItem);
+    insertLegendItem(legendItem);
   }
 }
 
@@ -128,4 +128,55 @@ function formatLabel(string) {
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+// Helper function to insert a legend item into the legend container
+// Icon layers first then line layers, sorted alphabetically
+// legendItem: the legend item to insert
+function insertLegendItem(legendItem) {
+  // get all the legend items
+  const legend = document.getElementById('legend');
+  const legendItems = Array.from(legend.children);
+
+  // make legend visible if it is not already when there are legend items
+  if (legendItems.length === 0 && legendItem.style.display !== 'block') {
+    legend.style.display = 'block';
+  }
+
+  if (!legendItem.id.includes('network')) {
+    // it is an icon layer
+    // first find the index of the next alphabetically sorted icon layer
+    const index = legendItems.findIndex(
+      (item) => !item.id.includes('network') && item.id > legendItem.id,
+    );
+
+    if (index === -1) {
+      // no icon layer found, so find the first line layer
+      const lineLayer = legendItems.find((item) => item.id.includes('network'));
+      if (!lineLayer) {
+        // if there are no line layers, insert the legend item at the end
+        legend.appendChild(legendItem);
+      } else {
+        // otherwise insert the legend item before the first line layer
+        legend.insertBefore(legendItem, lineLayer);
+      }
+    } else {
+      // there is an icon layer that is alphabetically larger, so insert the legend item before it
+      legend.insertBefore(legendItem, legendItems[index]);
+    }
+  } else {
+    // it is a line layer
+    // first find the index of the next alphabetically larger line layer
+    const index = legendItems.findIndex(
+      (item) => item.id.includes('network') && item.id > legendItem.id,
+    );
+
+    if (index === -1) {
+      // no alphabetally larger line layer so insert the legend item at the end
+      legend.appendChild(legendItem);
+    } else {
+      // there is an alphabetically larger line layer so insert the legend item before it
+      legend.insertBefore(legendItem, legendItems[index]);
+    }
+  }
 }

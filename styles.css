@@ -57,6 +57,7 @@ body {
         /** border for legend container */
         border: 1px solid #000000;
         border-radius: 5px;
+        display: none;
       }
     }
   }
