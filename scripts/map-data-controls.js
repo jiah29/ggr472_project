@@ -45,7 +45,7 @@ map.on('load', function () {
   addSubwayStationsSourceAndLayer((visible = false));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
-  addWatchYourSpeedProgramSourceAndLayer((visible = false));
+  addWatchYourSpeedProgramSourceAndLayer((visible = true));
   addParksSourceAndLayer((visible = false));
 
   // add dynamic data for bike share stations
@@ -211,7 +211,7 @@ function addWatchYourSpeedProgramSourceAndLayer(visible) {
     url: 'mapbox://jiahao29.9yvzrd8v',
   });
   map.addLayer({
-    id: 'watch-your-speed',
+    id: 'watch-your-speed-program',
     type: 'symbol',
     source: 'watch-your-speed-data',
     'source-layer': 'Watch_Your_Speed_Program_Sign-2bje7e',
@@ -224,7 +224,7 @@ function addWatchYourSpeedProgramSourceAndLayer(visible) {
     },
   });
   // show or hide layer in legend based on visible argument
-  toggleLayerLegend('watch-your-speed', visible);
+  toggleLayerLegend('watch-your-speed-program', visible);
 }
 
 // Add sources and layers for parks
