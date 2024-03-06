@@ -10,11 +10,10 @@
 // visible: boolean indicating if the layer is visible
 function toggleLayerLegend(layer, visible) {
   if (layer != 'cycling-network' && layer != 'pedestrian-network') {
-    // if the layer is not a line layer, it is an icon layer
-    // so call the toggleIconLegend function
+    // the layer is not a line layer, use the toggleIconLegend function
     toggleIconLegend(layer, visible);
   } else {
-    // otherwise call the toggleLineLegend function
+    // otherwise use the toggleLineLegend function
     toggleLineLegend(layer, visible);
   }
 }
@@ -65,8 +64,8 @@ function toggleIconLegend(layer, visible) {
     // append the label to the legend item
     legendItem.appendChild(legendLabel);
 
-    // add legend item to legend container
-    insertLegendItem(legendItem);
+    // add legend item to legend container based on specified sorting method
+    sortAndInsertLegendItem(legendItem);
   }
 }
 
@@ -116,8 +115,8 @@ function toggleLineLegend(layer, visible) {
     // append the label to the legend item
     legendItem.appendChild(legendLabel);
 
-    // add legend item to legend container
-    insertLegendItem(legendItem);
+    // add legend item to legend container based on specified sorting method
+    sortAndInsertLegendItem(legendItem);
   }
 }
 
@@ -131,9 +130,11 @@ function formatLabel(string) {
 }
 
 // Helper function to insert a legend item into the legend container
-// Icon layers first then line layers, sorted alphabetically
+// Legend items are sorted according to the following rules:
+// 1. Icon layers are shown first, and are sorted alphabetically
+// 2. Line layers are shown after icon layers, and are sorted alphabetically
 // legendItem: the legend item to insert
-function insertLegendItem(legendItem) {
+function sortAndInsertLegendItem(legendItem) {
   // get all the legend items
   const legend = document.getElementById('legend');
   const legendItems = Array.from(legend.children);
