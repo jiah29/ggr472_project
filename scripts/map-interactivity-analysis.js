@@ -15,7 +15,7 @@ function addSidebarCloseEvent(map) {
     .addEventListener('click', function () {
       // hide the sidebar
       document.getElementById('sidebar').style.display = 'none';
-      // set map to take up full width using Bootstrap classes
+      // set map to take up full width using Bootstrap class
       document.getElementById('map-content').className = 'col-12';
 
       // trigger map resize to fit new width
