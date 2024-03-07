@@ -45,13 +45,13 @@ map.on('load', function () {
   addSubwayStationsSourceAndLayer((visible = false));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
-  addWatchYourSpeedProgramSourceAndLayer((visible = tfalse));
+  addWatchYourSpeedProgramSourceAndLayer((visible = false));
   addParksSourceAndLayer((visible = false));
 
   // add dynamic data for bike share stations
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
-  })
+  });
 });
 
 // ============================================================================

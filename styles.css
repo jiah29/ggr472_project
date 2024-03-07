@@ -13,7 +13,8 @@ body {
   /* styling for the navbar */
   .navbar {
     width: 100%;
-    height: 7%; /* 7% of the viewport height - the rest for the main content */
+    min-height: 7%; /* min height is 7% of the viewport height, the rest is for the main body */
+    height: fit-content; /* allow for the navbar to scale to fit content */
   }
 
   /* styling for the main content section (below navbar) in index.html page*/
@@ -37,6 +38,7 @@ body {
         margin-left: auto;
         margin-right: auto;
         border-radius: 5px;
+        /* make sure that sidebar always has the same minimum height, but can scale to fit content */
         min-height: 50px;
         height: fit-content;
 
@@ -45,6 +47,11 @@ body {
           display: flex;
           align-items: center; /* make sure that they are all vertically centered */
           font-size: 100%;
+        }
+
+        /** styling for icons in sidebar */
+        i {
+          cursor: pointer; /* indicate that the icon is clickable */
         }
 
         /** styling for sidebar items with hidden class attribute */
