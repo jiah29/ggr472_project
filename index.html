@@ -38,19 +38,28 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <!-- NAVBAR -->
+    <!-- NAVBAR USING BOOTSTRAP TEMPLATE -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="./index.html">TDSB Active Travel</a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <!-- Links to other pages -->
             <li class="nav-item">
               <a class="nav-link" href="./resources.html">Resources</a>
             </li>
           </ul>
+          <!-- Search bar for schools -->
           <form class="d-flex" role="search" center="right">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
           </form>
         </div>
       </div>
@@ -59,50 +68,78 @@
     <div class="row" id="main">
       <!-- SIDEBAR -->
       <div class="col-3 bg-light text-black d-sm-block d-none" id="sidebar">
+        <!-- Sidebar items and controls to toggle on and off layers -->
+
+        <!-- School layer toggle -->
         <div class="sidebar-item row" id="schools-toggle">
-          <div class="col-10"> School </div>
-          <div class="col-2"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye-slash"></i></div>
+          <!-- Name of layer -->
+          <div class="col-10">Schools</div>
+          <!-- eye icon to show when layer is on -->
+          <div class="col-2"><i class="fa-solid fa-eye"></i></div>
+          <!-- eye-slash icon to show when layer is off - 
+          schools are on by default, so hide the eye-slash icon by default 
+          using the "hidden" class attribute -->
+          <div class="col-2 hidden"><i class="fa-solid fa-eye-slash"></i></div>
         </div>
-        <div class="sidebar-item row" id="watch-your-speed-program-toggle">
-          <div class="col-10"> Watch Your Speed Program </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
-        <div class="sidebar-item row" id="pedestrian-network-toggle">
-          <div class="col-10"> Pedestrian Network </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
-        <div class="sidebar-item row" id="cycling-network-toggle">
-          <div class="col-10"> Cycling Network </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
-        <div class="sidebar-item row" id="subway-stations-toggle">
-          <div class="col-10"> Subway Stations </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
-        <div class="sidebar-item row" id="speed-enforcement-toggle">
-          <div class="col-10"> Speed Enforcement Program </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
-        <div class="sidebar-item row" id="traffic-calming-toggle">
-          <div class="col-10"> Traffic Calming </div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
-        </div>
+
+        <!-- Similar sidebar items for other layers 
+        Except that they are hidden by default, so the eye icon is hidden 
+        (set using the "hidden" class attribute) -->
+
+        <!-- Bike share stations toggle -->
         <div class="sidebar-item row" id="bike-share-stations-toggle">
-          <div class="col-10"> Bike Share Stations</div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
+          <div class="col-10">Bike Share Stations</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
         </div>
+
+        <!-- Cycling network toggle toggle -->
+        <div class="sidebar-item row" id="cycling-network-toggle">
+          <div class="col-10">Cycling Network</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Parks layer toggle -->
         <div class="sidebar-item row" id="parks-toggle">
-          <div class="col-10"> Parks</div>
-          <div class="col-2 hidden"> <i class="fa-solid fa-eye"></i> </div>
-          <div class="col-2"> <i class="fa-solid fa-eye-slash"></i></div>
+          <div class="col-10">Parks</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Pedestrian network toggle toggle -->
+        <div class="sidebar-item row" id="pedestrian-network-toggle">
+          <div class="col-10">Pedestrian Network</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Speed enforcement toggle -->
+        <div class="sidebar-item row" id="speed-enforcement-toggle">
+          <div class="col-10">Speed Enforcement Program Locations</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Subway stations toggle -->
+        <div class="sidebar-item row" id="subway-stations-toggle">
+          <div class="col-10">Subway Stations</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Traffic calming layer toggle -->
+        <div class="sidebar-item row" id="traffic-calming-toggle">
+          <div class="col-10">Traffic Calming Measures Locations</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
+        </div>
+
+        <!-- Watch your speed program toggle toggle -->
+        <div class="sidebar-item row" id="watch-your-speed-program-toggle">
+          <div class="col-10">Watch Your Speed Program Locations</div>
+          <div class="col-2 hidden"><i class="fa-solid fa-eye"></i></div>
+          <div class="col-2"><i class="fa-solid fa-eye-slash"></i></div>
         </div>
       </div>
 
@@ -116,7 +153,6 @@
         <div id="map" class="map-container"></div>
       </div>
     </div>
-
 
     <!-- Custom js -->
     <script src="./scripts/legend-controls.js"></script>
@@ -137,6 +173,6 @@
       src="https://kit.fontawesome.com/d8ea921d33.js"
       crossorigin="anonymous"
     ></script>
-    <script src="https://watergis.github.io/mapbox-gl-export/mapbox-gl-export.js"></script> 
+    <script src="https://watergis.github.io/mapbox-gl-export/mapbox-gl-export.js"></script>
   </body>
 </html>
