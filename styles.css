@@ -27,8 +27,10 @@ body {
     #sidebar {
       padding-right: 10px;
       padding-left: 10px;
+      padding-top: 30px;
 
-      .sidebar-item{
+      /* styling for sidebar items */
+      .sidebar-item {
         background-color: lightblue;
         margin-bottom: 12px;
         width: 80%;
@@ -36,13 +38,16 @@ body {
         margin-right: auto;
         border-radius: 5px;
         height: 50px;
-        
+
+        /** styling for individual components inside the sidebar item */
         div {
           display: flex;
-          align-items: center;
+          align-items: center; /* make sure that they are all vertically centered */
         }
 
+        /** styling for sidebar items with hidden class attribute */
         .hidden {
+          /* make sure that they are hidden, overriding any default display mode*/
           display: none !important;
         }
       }
