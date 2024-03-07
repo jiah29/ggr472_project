@@ -76,6 +76,11 @@
     <div class="row" id="main">
       <!-- SIDEBAR -->
       <div class="col-5 col-md-3 bg-light text-black" id="sidebar">
+        <!-- button to close sidebar -->
+        <div id="close-sidebar-button">
+          <button type="button" class="btn-close" id="close-sidebar"></button>
+        </div>
+
         <!-- Sidebar items and controls to toggle on and off layers -->
 
         <!-- School layer toggle -->
@@ -195,6 +200,10 @@
 
       <!-- MAP CONTENT (LGEND AND MAP CONTAINER) -->
       <div class="col-7 col-md-9" id="map-content">
+        <!-- Button to open sidebar -->
+        <div id="open-sidebar-button">
+          <i class="fa-solid fa-circle-chevron-right"></i>
+        </div>
         <!-- Legend container -->
         <div class="legend-container" id="legend">
           <!-- Legend items are added dynamically via JS -->
@@ -206,6 +215,7 @@
 
     <!-- Custom js -->
     <script src="./scripts/legend-controls.js"></script>
+    <script src="./scripts/map-interactivity-analysis.js"></script>
     <script src="./scripts/map-data-controls.js"></script>
     <!-- Bootstrap -->
     <script

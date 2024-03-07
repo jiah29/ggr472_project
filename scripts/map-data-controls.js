@@ -426,3 +426,14 @@ function exportMapImage() {
   img.remove();
   link.remove();
 }
+
+// ============================================================================
+// Functions to add interactivity and analysis features.
+// These functions are defined in map-interactivity-analysis.js to avoid
+// cluttering this script.
+// ============================================================================
+
+// add event listener to close sidebar
+addSidebarCloseEvent(map);
+// add event listener to open sidebar
+addSidebarOpenEvent(map);

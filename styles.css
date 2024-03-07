@@ -28,7 +28,14 @@ body {
     #sidebar {
       padding-right: 10px;
       padding-left: 10px;
-      padding-top: 30px;
+      padding-top: 10px;
+
+      /* styling for the close sidebar button container */
+      #close-sidebar-button {
+        width: 100%;
+        text-align: right;
+        margin-bottom: 10px;
+      }
 
       /* styling for sidebar items */
       .sidebar-item {
@@ -66,13 +73,26 @@ body {
     #map-content {
       padding-left: 0;
       padding-right: 0;
-      /* Change position to relative to allow absolute positioning of legend */
+      /* Use relative positioning to allow absolute positioning of legend 
+      relative to where the map content is*/
       position: relative;
 
       /* styling for the map container */
       .map-container {
         width: 100%;
         height: 100%;
+      }
+
+      /* styling for open sidebar button */
+      #open-sidebar-button {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        z-index: 2; /* make sure that the button is on top of the map */
+        cursor: pointer;
+        width: fit-content;
+        font-size: x-large;
+        display: none; /* by default, hide the open sidebar button */
       }
 
       /* Styling for legend container*/
