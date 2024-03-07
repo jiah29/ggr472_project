@@ -27,6 +27,25 @@ body {
     #sidebar {
       padding-right: 10px;
       padding-left: 10px;
+
+      .sidebar-item{
+        background-color: lightblue;
+        margin-bottom: 12px;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 5px;
+        height: 50px;
+        
+        div {
+          display: flex;
+          align-items: center;
+        }
+
+        .hidden {
+          display: none !important;
+        }
+      }
     }
 
     /** styling for the map content section */
