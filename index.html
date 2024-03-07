@@ -57,6 +57,107 @@
               <a class="nav-link" href="./resources.html">Resources</a>
             </li>
           </ul>
+
+          <!-- Instruction modal using Bootstrap template -->
+          <!-- Icon that triggers modal -->
+          <i
+            class="fa-solid fa-circle-info mb-3 mb-lg-0"
+            data-bs-toggle="modal"
+            data-bs-target="#instructionsModal"
+            id="modal-button"
+          ></i>
+
+          <!-- Modal -->
+          <div class="modal fade" id="instructionsModal" tabindex="-1">
+            <div
+              class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+            >
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="modalTitle">
+                    Using this web map
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div>
+                    The primary purpose of this web map is to allow you to
+                    visualize relevant features around a school to inform and
+                    guide your planning process for active school travel, either
+                    by walking or cycling.
+                  </div>
+                  <hr />
+                  <div>
+                    <h5>Visualize</h5>
+                    <h6>Showing and hiding layers</h6>
+                    <p>
+                      You may toggle on or off layers through the sidebar
+                      <i class="fa-solid fa-eye"></i> or
+                      <i class="fa-solid fa-eye-slash"></i>
+                      icons to see any features of interest.
+                    </p>
+                    <h6>Want to know more?</h6>
+                    <p>
+                      Click on a feature to open a pop-up with relevant
+                      information of the feature.
+                    </p>
+                    <h6>Interested in a specific school?</h6>
+                    <p>
+                      Search for a target school via the search box in the
+                      navigation bar, or double-click on the school point
+                      feature to zoom in to focus on a school.
+                    </p>
+                    <h6>When focusing in on a school</h6>
+                    <ul>
+                      <li>All other schools will be hidden from view.</li>
+                      <li>
+                        Two buffers around the school will show up, representing
+                        10 minutes walking distance and cycling distance
+                        respectively.
+                      </li>
+                      <li>
+                        All walking bus stop suggestions (such as parks and bike
+                        share stations) within the buffer distance will be
+                        highlighted.
+                      </li>
+                      <li>
+                        Hover on non-school features to see their distance and
+                        estimated traveling times to the school in focus.
+                      </li>
+                    </ul>
+                  </div>
+                  <hr />
+                  <div>
+                    <h5>Plan</h5>
+                    <h6>Recording features of interest</h6>
+                    <p>
+                      Have a feature that you want to include in your plan?
+                      Simply right click on it to highlight them for reference.
+                    </p>
+                    <h6>Drawing an active travel route</h6>
+                    <p>
+                      Use the drawing tools (<img
+                        src="./images/draw-line-icon.png"
+                        width="25px"
+                      />)at the bottom right of the map to draw a route. Click
+                      on the drawn route to see its total length and estimated
+                      traveling time.
+                    </p>
+                    <h6>Happy with your route?</h6>
+                    <p>
+                      Click <i class="fa-solid fa-print"></i> at the bottom
+                      right of the map to export the map as a PNG file!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Search bar for schools -->
           <form class="d-flex" role="search" center="right">
             <input
@@ -78,7 +179,7 @@
       <div class="col-5 col-md-3 bg-light text-black" id="sidebar">
         <!-- button to close sidebar -->
         <div id="close-sidebar-button">
-          <button type="button" class="btn-close" id="close-sidebar"></button>
+          <i class="fa-solid fa-circle-chevron-left"></i>
         </div>
 
         <!-- Sidebar items and controls to toggle on and off layers -->
