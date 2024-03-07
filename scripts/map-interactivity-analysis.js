@@ -8,7 +8,8 @@
 // HTML Elements Interactivity
 // ============================================================================
 
-// Function to add event listener to close sidebar
+// Function to add click event listener to close sidebar
+// map: mapboxgl.Map object to resize
 function addSidebarCloseEvent(map) {
   document
     .getElementById('close-sidebar-button')
@@ -25,7 +26,8 @@ function addSidebarCloseEvent(map) {
     });
 }
 
-// Function to add event listener to open sidebar
+// Function to add click event listener to open sidebar
+// map: mapboxgl.Map object to resize
 function addSidebarOpenEvent(map) {
   document
     .getElementById('open-sidebar-button')
