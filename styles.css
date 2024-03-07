@@ -37,12 +37,14 @@ body {
         margin-left: auto;
         margin-right: auto;
         border-radius: 5px;
-        height: 50px;
+        min-height: 50px;
+        height: fit-content;
 
         /** styling for individual components inside the sidebar item */
         div {
           display: flex;
           align-items: center; /* make sure that they are all vertically centered */
+          font-size: 100%;
         }
 
         /** styling for sidebar items with hidden class attribute */
