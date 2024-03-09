@@ -52,6 +52,8 @@ map.on('load', function () {
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
+
+  addPopUpToDrawnRoutes(map, drawControl);
 });
 
 // ============================================================================
