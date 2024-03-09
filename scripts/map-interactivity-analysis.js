@@ -280,9 +280,8 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     // there is a school in focus, display the school focus indicator with the school name
     document.getElementById('school-focus-indicator-container').style.display =
       'block';
-    document.getElementById(
-      'school-in-focus',
-    ).innerHTML = `School in Focus: {schoolInFocus}`;
+    document.getElementById('school-in-focus').innerHTML =
+      'School in Focus: ' + schoolInFocus;
 
     // hide all other schools through filter
     map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
