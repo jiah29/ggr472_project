@@ -5,12 +5,12 @@
 // ============================================================================
 
 // ============================================================================
-// Global Constants
+// Global Constants & Variables
 // ============================================================================
 CYCLING_SPEED = 250; // meter/minute
 WALKING_SPEED = 80; // meter/minute
 // list of data layers on map
-const LAYERS = {
+LAYERS = {
   Schools: 'schools',
   Parks: 'parks',
   SpeedEnforcement: 'speed-enforcement',
@@ -21,6 +21,14 @@ const LAYERS = {
   CyclingNetwork: 'cycling-network',
   PedestrianNetwork: 'pedestrian-network',
 };
+
+// variable to store the school in focus (used in determining whether a school is in focus)
+var schoolInFocus = null;
+// flag to track if user draw mode has changed
+var drawModeChanges = false;
+// NOTE: We are allowing only 1 route pop up at a time to simplify the code
+// variable to store the current user-drawn route pop up showing
+var currentRoutePopup = null;
 
 // ============================================================================
 // HTML Elements Interactivity
@@ -82,10 +90,6 @@ function closeSchoolFocusModeEvent(map) {
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
-
-var drawModeChanges = false; // flag to track if draw mode has changed
-// We are allowing only 1 route pop up at a time to simplify the code
-var currentRoutePopup = null; // variable to store the current route pop up
 
 // Function to add event listener to add pop up to drawn routes when they
 // are selected
@@ -221,8 +225,6 @@ function changeCursorToPointerOnHover(map) {
     });
   });
 }
-
-var schoolInFocus = null; // variable to store the school in focus
 
 // Function to add event listener to show zoom in to school
 // when it is double clicked
