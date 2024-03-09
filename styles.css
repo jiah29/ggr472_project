@@ -39,6 +39,7 @@ body {
       /* styling for the close sidebar button container */
       #close-sidebar-button {
         width: 100%;
+        padding-right: 5px;
         text-align: right;
         margin-bottom: 10px;
         font-size: x-large;
