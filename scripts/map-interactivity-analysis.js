@@ -55,20 +55,18 @@ function addSidebarOpenEvent(map) {
 
 var drawModeChanges = false; // flag to track if draw mode has changed
 // We are allowing only 1 route pop up at a time to simplify the code
-var popUpShown = false; // flag to track if pop up is shown
 var currentRoutePopup = null; // variable to store the current route pop up
 
 // Function to add event listener to add pop up to drawn routes when they
 // are selected
 // map: mapbox map object to add event listeners to
 // drawControl: Mapbox Draw control object to get the current mode from
-function addPopUpToDrawnRoutes(map, drawControl) {
+function addPopUpToDrawnRoutesEvent(map, drawControl) {
   map.on('draw.selectionchange', function (e) {
     if (drawModeChanges) {
       // do not trigger the pop up if the draw mode has just changed
       // users likely do not click on purpose, so make sure everything is closed
       drawModeChanges = false;
-      popUpShown = false;
       closeRoutePopUp();
     } else {
       // if it is really a selection change not caused by draw mode changes,
@@ -76,8 +74,11 @@ function addPopUpToDrawnRoutes(map, drawControl) {
       // also check for direct_select, which is used for editing
       // the drawn routes, so do not show pop up then
       if (e.features.length > 0 && drawControl.getMode() !== 'direct_select') {
+        if (currentRoutePopup) {
+          // remove the current route pop up if it exists
+          currentRoutePopup.remove();
+        }
         addRoutePopUp(e.features[0], map);
-        popUpShown = true;
       }
     }
   });
@@ -125,7 +126,7 @@ function addRoutePopUp(routeFeature, map) {
 
   // add event listener to toggle pop up shown states when pop up is closed
   currentRoutePopup.on('close', function () {
-    popUpShown = false;
+    currentRoutePopup = null;
   });
 }
 

@@ -15,6 +15,17 @@ const map = new mapboxgl.Map({
   preserveDrawingBuffer: true,
 });
 
+// create a new instance of MapboxDraw
+const drawControl = new MapboxDraw({
+  // do not allow displaying all default controls
+  displayControlsDefault: false,
+  // only allow drawing of lines and the ability to delete
+  controls: {
+    line_string: true,
+    trash: true,
+  },
+});
+
 map.on('load', function () {
   // Add a scale control to the map
   map.addControl(new mapboxgl.ScaleControl(), 'bottom-right');
@@ -25,16 +36,7 @@ map.on('load', function () {
   // Add map export control to the map
   addExportControl(map);
 
-  // Add draw tools and controls to the map
-  const drawControl = new MapboxDraw({
-    // do not allow displaying all default controls
-    displayControlsDefault: false,
-    // only allow drawing of lines and the ability to delete
-    controls: {
-      line_string: true,
-      trash: true,
-    },
-  });
+  // Add the draw control to the map
   map.addControl(drawControl, 'bottom-right');
 
   // add all required vector maptile sources and layers (static data)
@@ -53,7 +55,8 @@ map.on('load', function () {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
 
-  addPopUpToDrawnRoutes(map, drawControl);
+  // add event listener to drawn routes to add pop up
+  addPopUpToDrawnRoutesEvent(map, drawControl);
 });
 
 // ============================================================================
