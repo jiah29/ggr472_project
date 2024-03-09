@@ -117,10 +117,12 @@ body {
           position: relative;
           margin: auto;
           width: fit-content;
+          max-width: 90%;
           padding: 2px 5px;
           border-radius: 5px;
           color: white;
           background-color: rgba(0, 0, 0, 0.75);
+          text-align: center;
         }
 
         /* styling for the close button */

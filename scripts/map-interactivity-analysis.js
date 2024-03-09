@@ -70,7 +70,7 @@ function closeSchoolFocusModeEvent(map) {
     .addEventListener('click', function () {
       // reset the school in focus to null
       schoolInFocus = null;
-      toggleSchoolFocusMode(map);
+      toggleSchoolFocusModeIndicator(map);
       // fly back to the original view
       map.flyTo({
         center: [-79.370729, 43.719518],
@@ -172,6 +172,42 @@ function closeRoutePopUp() {
 // Map Layer & Features Interactivity & Analysis
 // ============================================================================
 
+// Function when geocoder is done searching for a school
+// map: mapbox map object where the geocoder is used
+// geocoder: Geocoder object to add event listener to
+function addGeocoderResultEvent(map, geocoder) {
+  geocoder.on('result', function (e) {
+    // check if the school layer in view has school name = the search text
+    schoolGeocoded = e.result.text;
+    result = map.queryRenderedFeatures({
+      filter: ['==', ['get', 'SCH_NAM3'], schoolGeocoded],
+    });
+
+    if (result.length > 0) {
+      // result found, set the school in focus to the geocoded school and toggle school focus mode
+      schoolInFocus = schoolGeocoded;
+      toggleSchoolFocusModeIndicator(map);
+      // fly to the school using coordinates in data source instead of the geocoder result
+      map.flyTo({
+        center: result[0].geometry.coordinates,
+        zoom: 15,
+      });
+    } else {
+      // if the school is not found, show the school focus mode indicator with failure message
+      toggleSchoolFocusModeIndicator(map, (geocodeResultFailure = true));
+      // make sure to stay in the same view
+      map.flyTo({
+        center: map.getCenter(),
+        zoom: map.getZoom(),
+      });
+    }
+
+    // hide the geocoder marker icon
+    document.getElementsByClassName('mapboxgl-marker')[0].style.display =
+      'none';
+  });
+}
+
 // Change the cursor to a pointer when the mouse is over all layer
 // map: mapbox map object to add event listener to
 function changeCursorToPointerOnHover(map) {
@@ -205,20 +241,46 @@ function addZoomInToSchoolEventOnDblClick(map) {
       });
     }, 10);
     schoolInFocus = e.features[0].properties.SCH_NAM3;
-    toggleSchoolFocusMode(map);
+    toggleSchoolFocusModeIndicator(map);
   });
 }
 
-// Helper function to toggle the school focus mode indicator based on the
-// schoolInFocus var. When in focus mode, only the school in focus is shown.
-function toggleSchoolFocusMode(map) {
-  if (schoolInFocus) {
-    // if there is a school in focus, display the school focus indicator
-    // with the school name
+// Helper function to toggle the school focus mode indicator and view.
+// map: mapbox map object
+// geocodeResultFailure: whether to show the geocoder failure message (default is false)
+function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
+  // show geocoder failure message in indicator
+  if (geocodeResultFailure) {
     document.getElementById('school-focus-indicator-container').style.display =
       'block';
     document.getElementById('school-in-focus').innerHTML =
-      'School in Focus: ' + schoolInFocus;
+      'No result found. Search text may not exist in the TDSB schools data source. \
+      <br> \
+      Please manually search for the school on the map.';
+
+    // hide the close indicator button - this will be closed automatically
+    document.getElementById('focus-close-button').style.display = 'none';
+
+    // close indicator after 5 seconds
+    setTimeout(() => {
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'none';
+      // also turn the close indicator button back on since that is the default state
+      document.getElementById('focus-close-button').style.display = 'inline';
+    }, 10000);
+
+    return;
+  }
+
+  // not showing failure message, so check if there is a school in focus
+  if (schoolInFocus) {
+    // there is a school in focus, display the school focus indicator with the school name
+    document.getElementById('school-focus-indicator-container').style.display =
+      'block';
+    document.getElementById(
+      'school-in-focus',
+    ).innerHTML = `School in Focus: {schoolInFocus}`;
 
     // hide all other schools through filter
     map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
