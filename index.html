@@ -165,6 +165,7 @@
               type="search"
               placeholder="Search"
               aria-label="Search"
+              id="school-search-form"
             />
             <button class="btn btn-outline-success" type="submit">
               Search
@@ -304,6 +305,15 @@
         <!-- Button to open sidebar -->
         <div id="open-sidebar-button">
           <i class="fa-solid fa-circle-chevron-right"></i>
+        </div>
+        <!-- Indicator to show when school is in focus -->
+        <div id="school-focus-indicator-container">
+          <div id="indicator-content">
+            <!-- element to hold the indicator text that will be added via JS -->
+            <span id="school-in-focus"></span>
+            <!-- close button to close the school focus mode -->
+            <i class="fa-solid fa-xmark" id="focus-close-button"></i>
+          </div>
         </div>
         <!-- Legend container -->
         <div class="legend-container" id="legend">

@@ -54,9 +54,6 @@ map.on('load', function () {
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
-
-  // add event listener to drawn routes to add pop up
-  addPopUpToDrawnRoutesEvent(map, drawControl);
 });
 
 // ============================================================================
@@ -442,3 +439,11 @@ function exportMapImage() {
 addSidebarCloseEvent(map);
 // add event listener to open sidebar
 addSidebarOpenEvent(map);
+// add event listener to close school focus mode
+closeSchoolFocusModeEvent(map);
+// add hover event listener to change cursor when hovering over features
+changeCursorToPointerOnHover(map);
+// add zoom to school event on double click
+addZoomInToSchoolEventOnDblClick(map);
+// add event listener to drawn routes to add pop up
+addPopUpToDrawnRoutesEvent(map, drawControl);

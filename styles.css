@@ -103,6 +103,33 @@ body {
         display: none; /* by default, hide the open sidebar button */
       }
 
+      /* styling for the focus indicator */
+      #school-focus-indicator-container {
+        display: none;
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        z-index: 2;
+
+        /* styling for the indicator container that should be
+        centred in the #school-focus-indicator-container section*/
+        #indicator-content {
+          position: relative;
+          margin: auto;
+          width: fit-content;
+          padding: 2px 5px;
+          border-radius: 5px;
+          color: white;
+          background-color: rgba(0, 0, 0, 0.75);
+        }
+
+        /* styling for the close button */
+        #focus-close-button {
+          margin-left: 5px;
+          cursor: pointer;
+        }
+      }
+
       /* Styling for legend container*/
       .legend-container {
         /** background color for legend */

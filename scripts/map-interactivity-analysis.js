@@ -5,17 +5,29 @@
 // ============================================================================
 
 // ============================================================================
-// Global Variables
+// Global Constants
 // ============================================================================
 CYCLING_SPEED = 250; // meter/minute
 WALKING_SPEED = 80; // meter/minute
+// list of data layers on map
+const LAYERS = {
+  Schools: 'schools',
+  Parks: 'parks',
+  SpeedEnforcement: 'speed-enforcement',
+  SubwayStations: 'subway-stations',
+  TrafficCalming: 'traffic-calming',
+  WatchYourSpeedProgram: 'watch-your-speed-program',
+  BikeShareStations: 'bike-share-stations',
+  CyclingNetwork: 'cycling-network',
+  PedestrianNetwork: 'pedestrian-network',
+};
 
 // ============================================================================
 // HTML Elements Interactivity
 // ============================================================================
 
 // Function to add click event listener to close sidebar
-// map: mapboxgl.Map object to resize
+// map: map object to resize after window size changes when sidebar is closed
 function addSidebarCloseEvent(map) {
   document
     .getElementById('close-sidebar-button')
@@ -33,7 +45,7 @@ function addSidebarCloseEvent(map) {
 }
 
 // Function to add click event listener to open sidebar
-// map: mapboxgl.Map object to resize
+// map: map object to resize after window size changes when sidebar is opened
 function addSidebarOpenEvent(map) {
   document
     .getElementById('open-sidebar-button')
@@ -49,8 +61,26 @@ function addSidebarOpenEvent(map) {
     });
 }
 
+// Function to add click event listener to close school focus mode through
+// the close button in the school focus indicator on map
+// map: map object to reset view after closing school focus mode
+function closeSchoolFocusModeEvent(map) {
+  document
+    .getElementById('focus-close-button')
+    .addEventListener('click', function () {
+      // reset the school in focus to null
+      schoolInFocus = null;
+      toggleSchoolFocusMode();
+      // fly back to the original view
+      map.flyTo({
+        center: [-79.370729, 43.719518],
+        zoom: 10,
+      });
+    });
+}
+
 // ============================================================================
-// Drawn Routes Interactivity & Analysis
+// User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
 
 var drawModeChanges = false; // flag to track if draw mode has changed
@@ -135,5 +165,63 @@ function closeRoutePopUp() {
   // remove the current route pop up if it exists
   if (currentRoutePopup) {
     currentRoutePopup.remove();
+  }
+}
+
+// ============================================================================
+// Map Layer & Features Interactivity & Analysis
+// ============================================================================
+
+// Change the cursor to a pointer when the mouse is over all layer
+// map: mapbox map object to add event listener to
+function changeCursorToPointerOnHover(map) {
+  // change the cursor to pointer for all layers
+  Object.values(LAYERS).forEach((layer) => {
+    map.on('mouseenter', layer, function () {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', layer, function () {
+      map.getCanvas().style.cursor = '';
+    });
+  });
+}
+
+var schoolInFocus = null; // variable to store the school in focus
+
+// Function to add event listener to show zoom in to school
+// when it is double clicked
+// map: mapbox map object to add event listener to
+function addZoomInToSchoolEventOnDblClick(map) {
+  map.on('dblclick', LAYERS.Schools, function (e) {
+    // get the coordinates of the school
+    var coordinates = e.features[0].geometry.coordinates;
+    // zoom in to the school
+    // putting this in a settimeout as a work around without disabling
+    // the default map double click zoom in behaviour
+    setTimeout(() => {
+      map.flyTo({
+        center: coordinates,
+        zoom: 15,
+      });
+    }, 10);
+    schoolInFocus = e.features[0].properties.SCH_NAM3;
+    toggleSchoolFocusMode();
+  });
+}
+
+// Helper function to toggle the school focus mode indicator
+// based on the schoolInFocus variable
+function toggleSchoolFocusMode() {
+  if (schoolInFocus) {
+    // if there is a school in focus, display the school focus indicator
+    // with the school name
+    document.getElementById('school-focus-indicator-container').style.display =
+      'block';
+    document.getElementById('school-in-focus').innerHTML =
+      'School in Focus: ' + schoolInFocus;
+  } else {
+    // otherwise, hide the school focus indicator
+    document.getElementById('school-focus-indicator-container').style.display =
+      'none';
   }
 }
