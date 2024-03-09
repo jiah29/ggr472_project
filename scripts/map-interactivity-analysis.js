@@ -70,7 +70,7 @@ function closeSchoolFocusModeEvent(map) {
     .addEventListener('click', function () {
       // reset the school in focus to null
       schoolInFocus = null;
-      toggleSchoolFocusMode();
+      toggleSchoolFocusMode(map);
       // fly back to the original view
       map.flyTo({
         center: [-79.370729, 43.719518],
@@ -205,13 +205,13 @@ function addZoomInToSchoolEventOnDblClick(map) {
       });
     }, 10);
     schoolInFocus = e.features[0].properties.SCH_NAM3;
-    toggleSchoolFocusMode();
+    toggleSchoolFocusMode(map);
   });
 }
 
-// Helper function to toggle the school focus mode indicator
-// based on the schoolInFocus variable
-function toggleSchoolFocusMode() {
+// Helper function to toggle the school focus mode indicator based on the
+// schoolInFocus var. When in focus mode, only the school in focus is shown.
+function toggleSchoolFocusMode(map) {
   if (schoolInFocus) {
     // if there is a school in focus, display the school focus indicator
     // with the school name
@@ -219,9 +219,15 @@ function toggleSchoolFocusMode() {
       'block';
     document.getElementById('school-in-focus').innerHTML =
       'School in Focus: ' + schoolInFocus;
+
+    // hide all other schools through filter
+    map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
   } else {
     // otherwise, hide the school focus indicator
     document.getElementById('school-focus-indicator-container').style.display =
       'none';
+
+    // show all schools again by removing the filter
+    map.setFilter(LAYERS.Schools, null);
   }
 }
