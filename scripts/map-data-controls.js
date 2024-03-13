@@ -51,10 +51,10 @@ map.on('load', function () {
 
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
-  addSchoolsSourceAndLayer((visible = false));
+  addSchoolsSourceAndLayer((visible = true));
   addPedestrianNetworkSourceAndLayer((visible = false));
   addCyclingNetworkSourceAndLayer((visible = false));
-  addSubwayStationsSourceAndLayer((visible = true));
+  addSubwayStationsSourceAndLayer((visible = false));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
   addWatchYourSpeedProgramSourceAndLayer((visible = false));
@@ -62,7 +62,7 @@ map.on('load', function () {
 
   // add dynamic data for bike share stations
   fetchCurrentBikeShareData().then((bikeShareData) => {
-    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
+    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
 });
 
