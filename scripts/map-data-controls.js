@@ -45,13 +45,13 @@ map.on('load', function () {
   addSubwayStationsSourceAndLayer((visible = false));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
-  addWatchYourSpeedProgramSourceAndLayer((visible = tfalse));
+  addWatchYourSpeedProgramSourceAndLayer((visible = false));
   addParksSourceAndLayer((visible = false));
 
   // add dynamic data for bike share stations
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
-  })
+  });
 });
 
 // ============================================================================
@@ -426,3 +426,14 @@ function exportMapImage() {
   img.remove();
   link.remove();
 }
+
+// ============================================================================
+// Functions to add interactivity and analysis features.
+// These functions are defined in map-interactivity-analysis.js to avoid
+// cluttering this script.
+// ============================================================================
+
+// add event listener to close sidebar
+addSidebarCloseEvent(map);
+// add event listener to open sidebar
+addSidebarOpenEvent(map);
