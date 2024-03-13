@@ -332,6 +332,7 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
     };
   });
 
+
   // then add the GeoJSON feature collection as a source and layer to the map
   map.addSource('bike-share-data', {
     type: 'geojson',
@@ -350,6 +351,7 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+
   // show or hide layer in legend based on visible argument
   toggleLayerLegend('bike-share-stations', visible);
 }
@@ -381,6 +383,9 @@ function toggleDynamicBikeShareLayerVisibility(visible) {
     });
   } else {
     // simply remove the layer if it exists
+    if (map.getSource('bike-share-data')) {
+      map.removeSource('bike-share-data')
+    }
     if (map.getLayer('bike-share-stations')) {
       map.removeLayer('bike-share-stations');
     }
@@ -459,3 +464,5 @@ addZoomInToSchoolEventOnDblClick(map);
 addPopUpToDrawnRoutesEvent(map, drawControl);
 // add event listener geocoder when it returns a result
 addGeocoderResultEvent(map, geocoder);
+// add event listener to sidebar item to toggle on and off layer
+addSidebarToggleLayerEvent()

@@ -294,3 +294,31 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     map.setFilter(LAYERS.Schools, null);
   }
 }
+
+function addSidebarToggleLayerEvent() {
+  Object.values(LAYERS).forEach((layer) => {
+    const sidebarItem = document.getElementById(layer + "-toggle")
+    const divItems = Array.from(sidebarItem.children)
+    const openIcon = divItems[1]
+    const closeIcon = divItems[2]
+  
+    openIcon.addEventListener("click", (e) => {
+      openIcon.classList.add("hidden")
+      closeIcon.classList.remove("hidden")
+      if (layer === LAYERS.BikeShareStations) {
+        toggleDynamicBikeShareLayerVisibility(false)
+      } else {
+        toggleStaticLayerVisibility(layer, false)
+      }
+    })
+    closeIcon.addEventListener("click", (e) => {
+      closeIcon.classList.add("hidden")
+      openIcon.classList.remove("hidden")
+      if (layer === LAYERS.BikeShareStations) {
+        toggleDynamicBikeShareLayerVisibility(true)
+      } else {
+        toggleStaticLayerVisibility(layer, true)
+      }
+    })
+  })
+ }
