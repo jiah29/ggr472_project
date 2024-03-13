@@ -382,44 +382,53 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
 }
 
 // Function to add popup window with info when single click on a school
-function addSchoolPopup(map) {
+function addSchoolPopupEvent(map) {
   map.on('click', 'schools', (e) => {
     new mapboxgl.Popup()
-    .setLngLat(e.lngLat)
-    .setHTML("<b>School:</b> " + e.features[0].properties.SCH_NAM3 + 
-    "<br><b>Address:</b> " + e.features[0].properties.ADDRESS4 + 
-    "<br><b>District:</b> " + e.features[0].properties.MUNICIP12)
-    .addTo(map);
-  })
+      .setLngLat(e.lngLat)
+      .setHTML(
+        '<b>School:</b> ' +
+          e.features[0].properties.SCH_NAM3 +
+          '<br><b>Address:</b> ' +
+          e.features[0].properties.ADDRESS4 +
+          '<br><b>District:</b> ' +
+          e.features[0].properties.MUNICIP12,
+      )
+      .addTo(map);
+  });
 }
 
 // Function to add popup window with info when single click on a park
-function addParkPopup(map) {
+function addParkPopupEvent(map) {
   map.on('click', 'parks', (e) => {
     new mapboxgl.Popup()
-    .setLngLat(e.lngLat) 
-    .setHTML("<b>Park:</b> " + e.features[0].properties.ASSET_N4 + 
-    "<br><b>Address:</b> " + e.features[0].properties.ADDRESS7)
-    .addTo(map);
-  })
+      .setLngLat(e.lngLat)
+      .setHTML(
+        '<b>Park:</b> ' +
+          e.features[0].properties.ASSET_N4 +
+          '<br><b>Address:</b> ' +
+          e.features[0].properties.ADDRESS7,
+      )
+      .addTo(map);
+  });
 }
 
 // Function to add popup window with info when single click on a subway station
-function addSubwayPopup(map) {
+function addSubwayPopupEvent(map) {
   map.on('click', 'subway-stations', (e) => {
     new mapboxgl.Popup()
-    .setLngLat(e.lngLat) 
-    .setHTML("<b>Subway Station:</b> " + e.features[0].properties.Station_Na)
-    .addTo(map);
-  })
+      .setLngLat(e.lngLat)
+      .setHTML('<b>Subway Station:</b> ' + e.features[0].properties.Station_Na)
+      .addTo(map);
+  });
 }
 
 // Function to add popup window with info when single click on a bike share station
-function addBikeSharePopup(map) {
+function addBikeSharePopupEvent(map) {
   map.on('click', 'bike-share-stations', (e) => {
     new mapboxgl.Popup()
-    .setLngLat(e.lngLat) 
-    .setHTML("<b>Bike Share Station:</b> " + e.features[0].properties.name)
-    .addTo(map);
-  })
+      .setLngLat(e.lngLat)
+      .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
+      .addTo(map);
+  });
 }

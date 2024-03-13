@@ -426,12 +426,12 @@ addPopUpToDrawnRoutesEvent(map, drawControl);
 // add event listener geocoder when it returns a result
 addGeocoderResultEvent(map, geocoder);
 // add popup on click for school
-addSchoolPopup(map);
+addSchoolPopupEvent(map);
 // add popup on click for parks
-addParkPopup(map);
+addParkPopupEvent(map);
 // add popup on click for subway stations
-addSubwayPopup(map);
+addSubwayPopupEvent(map);
 // add popup on click bike share stations
-addBikeSharePopup(map);
+addBikeSharePopupEvent(map);
 // add event listener to sidebar item to toggle on and off layer
 addSidebarItemToggleLayerEvent(map);
