@@ -285,6 +285,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 
     // hide all other schools through filter
     map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
+
   } else {
     // otherwise, hide the school focus indicator
     document.getElementById('school-focus-indicator-container').style.display =
@@ -293,4 +294,47 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     // show all schools again by removing the filter
     map.setFilter(LAYERS.Schools, null);
   }
+}
+
+// Function to add popup window with info when single click on a school
+function addSchoolPopup(map) {
+  map.on('click', 'schools', (e) => {
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML("<b>School:</b> " + e.features[0].properties.SCH_NAM3 + 
+    "<br><b>Address:</b> " + e.features[0].properties.ADDRESS4 + 
+    "<br><b>District:</b> " + e.features[0].properties.MUNICIP12)
+    .addTo(map);
+  })
+}
+
+// Function to add popup window with info when single click on a park
+function addParkPopup(map) {
+  map.on('click', 'parks', (e) => {
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat) 
+    .setHTML("<b>Park:</b> " + e.features[0].properties.ASSET_N4 + 
+    "<br><b>Address:</b> " + e.features[0].properties.ADDRESS7)
+    .addTo(map);
+  })
+}
+
+// Function to add popup window with info when single click on a subway station
+function addSubwayPopup(map) {
+  map.on('click', 'subway-stations', (e) => {
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat) 
+    .setHTML("<b>Subway station:</b> " + e.features[0].properties.Station_Na)
+    .addTo(map);
+  })
+}
+
+// Function to add popup window with info when single click on a bike share station
+function addBikeSharePopup(map) {
+  map.on('click', 'bike-share-stations', (e) => {
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat) 
+    .setHTML("<b>Bike share station:</b> " + e.features[0].properties.name)
+    .addTo(map);
+  })
 }

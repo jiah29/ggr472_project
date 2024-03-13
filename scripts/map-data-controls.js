@@ -51,10 +51,10 @@ map.on('load', function () {
 
   // add all required vector maptile sources and layers (static data)
   // by default, only schools are visible
-  addSchoolsSourceAndLayer((visible = true));
+  addSchoolsSourceAndLayer((visible = false));
   addPedestrianNetworkSourceAndLayer((visible = false));
   addCyclingNetworkSourceAndLayer((visible = false));
-  addSubwayStationsSourceAndLayer((visible = false));
+  addSubwayStationsSourceAndLayer((visible = true));
   addTrafficCalmingSourceAndLayer((visible = false));
   addSpeedEnforcementSourceAndLayer((visible = false));
   addWatchYourSpeedProgramSourceAndLayer((visible = false));
@@ -62,7 +62,7 @@ map.on('load', function () {
 
   // add dynamic data for bike share stations
   fetchCurrentBikeShareData().then((bikeShareData) => {
-    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
+    addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
   });
 });
 
@@ -459,3 +459,11 @@ addZoomInToSchoolEventOnDblClick(map);
 addPopUpToDrawnRoutesEvent(map, drawControl);
 // add event listener geocoder when it returns a result
 addGeocoderResultEvent(map, geocoder);
+// add popup window for school
+addSchoolPopup(map);
+// add popup window for parks
+addParkPopup(map);
+// add popup window for subway stations
+addSubwayPopup(map);
+// add popup window for bike share stations
+addBikeSharePopup(map);
