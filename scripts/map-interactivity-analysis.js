@@ -324,7 +324,7 @@ function addSubwayPopup(map) {
   map.on('click', 'subway-stations', (e) => {
     new mapboxgl.Popup()
     .setLngLat(e.lngLat) 
-    .setHTML("<b>Subway station:</b> " + e.features[0].properties.Station_Na)
+    .setHTML("<b>Subway Station:</b> " + e.features[0].properties.Station_Na)
     .addTo(map);
   })
 }
@@ -334,7 +334,7 @@ function addBikeSharePopup(map) {
   map.on('click', 'bike-share-stations', (e) => {
     new mapboxgl.Popup()
     .setLngLat(e.lngLat) 
-    .setHTML("<b>Bike share station:</b> " + e.features[0].properties.name)
+    .setHTML("<b>Bike Share Station:</b> " + e.features[0].properties.name)
     .addTo(map);
   })
 }
