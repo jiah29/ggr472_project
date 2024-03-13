@@ -32,6 +32,13 @@
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css"
       type="text/css"
     />
+    <!-- Mapbox Geocoder -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.2/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
     <!-- Turf.js -->
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <!-- Custom CSS -->
@@ -159,17 +166,7 @@
           </div>
 
           <!-- Search bar for schools -->
-          <form class="d-flex" role="search" center="right">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
+          <div id="geocoder"></div>
         </div>
       </div>
     </nav>
@@ -299,11 +296,20 @@
         </div>
       </div>
 
-      <!-- MAP CONTENT (LGEND AND MAP CONTAINER) -->
+      <!-- MAP CONTENT (LEGEND AND MAP CONTAINER) -->
       <div class="col-7 col-md-9" id="map-content">
         <!-- Button to open sidebar -->
         <div id="open-sidebar-button">
           <i class="fa-solid fa-circle-chevron-right"></i>
+        </div>
+        <!-- Indicator to show when school is in focus -->
+        <div id="school-focus-indicator-container">
+          <div id="indicator-content">
+            <!-- element to hold the indicator text that will be added via JS -->
+            <span id="school-in-focus"></span>
+            <!-- close button to close the school focus mode -->
+            <i class="fa-solid fa-xmark" id="focus-close-button"></i>
+          </div>
         </div>
         <!-- Legend container -->
         <div class="legend-container" id="legend">

@@ -15,7 +15,7 @@ const map = new mapboxgl.Map({
   preserveDrawingBuffer: true,
 });
 
-// create a new instance of MapboxDraw
+// Define a new draw control object
 const drawControl = new MapboxDraw({
   // do not allow displaying all default controls
   displayControlsDefault: false,
@@ -25,6 +25,16 @@ const drawControl = new MapboxDraw({
     trash: true,
   },
 });
+
+// Define a new geocoder object
+const geocoder = new MapboxGeocoder({
+  accessToken: mapboxgl.accessToken,
+  mapboxgl: mapboxgl,
+  countries: 'ca', //Try searching for places inside and outside of canada to test the geocoder
+});
+
+// Add the geocoder to the sidebar
+document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 
 map.on('load', function () {
   // Add a scale control to the map
@@ -54,9 +64,6 @@ map.on('load', function () {
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
-
-  // add event listener to drawn routes to add pop up
-  addPopUpToDrawnRoutesEvent(map, drawControl);
 });
 
 // ============================================================================
@@ -442,3 +449,13 @@ function exportMapImage() {
 addSidebarCloseEvent(map);
 // add event listener to open sidebar
 addSidebarOpenEvent(map);
+// add event listener to close school focus mode
+closeSchoolFocusModeEvent(map);
+// add hover event listener to change cursor when hovering over features
+changeCursorToPointerOnHover(map);
+// add zoom to school event on double click
+addZoomInToSchoolEventOnDblClick(map);
+// add event listener to drawn routes to add pop up
+addPopUpToDrawnRoutesEvent(map, drawControl);
+// add event listener geocoder when it returns a result
+addGeocoderResultEvent(map, geocoder);
