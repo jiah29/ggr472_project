@@ -87,6 +87,36 @@ function closeSchoolFocusModeEvent(map) {
     });
 }
 
+// Helper function to add click event listener to sidebar item (eye icons)
+// that toggles on and off map layers
+function addSidebarItemToggleLayerEvent(map) {
+  Object.values(LAYERS).forEach((layer) => {
+    const sidebarItem = document.getElementById(layer + '-toggle');
+    const divItems = Array.from(sidebarItem.children);
+    const openIcon = divItems[1];
+    const closeIcon = divItems[2];
+
+    openIcon.addEventListener('click', (e) => {
+      openIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      if (layer === LAYERS.BikeShareStations) {
+        toggleDynamicBikeShareLayerVisibility(map, false);
+      } else {
+        toggleStaticLayerVisibility(map, layer, false);
+      }
+    });
+    closeIcon.addEventListener('click', (e) => {
+      closeIcon.classList.add('hidden');
+      openIcon.classList.remove('hidden');
+      if (layer === LAYERS.BikeShareStations) {
+        toggleDynamicBikeShareLayerVisibility(map, true);
+      } else {
+        toggleStaticLayerVisibility(map, layer, true);
+      }
+    });
+  });
+}
+
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
@@ -271,54 +301,82 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
       // also turn the close indicator button back on since that is the default state
       document.getElementById('focus-close-button').style.display = 'inline';
     }, 10000);
-
-    return;
-  }
-
-  // not showing failure message, so check if there is a school in focus
-  if (schoolInFocus) {
-    // there is a school in focus, display the school focus indicator with the school name
-    document.getElementById('school-focus-indicator-container').style.display =
-      'block';
-    document.getElementById('school-in-focus').innerHTML =
-      'School in Focus: ' + schoolInFocus;
-
-    // hide all other schools through filter
-    map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
   } else {
-    // otherwise, hide the school focus indicator
-    document.getElementById('school-focus-indicator-container').style.display =
-      'none';
+    // not showing failure message, so check if there is a school in focus
+    if (schoolInFocus) {
+      // there is a school in focus, display the school focus indicator with the school name
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'block';
+      document.getElementById('school-in-focus').innerHTML =
+        'School in Focus: ' + schoolInFocus;
 
-    // show all schools again by removing the filter
-    map.setFilter(LAYERS.Schools, null);
+      // hide all other schools through filter
+      map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
+    } else {
+      // otherwise, hide the school focus indicator
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'none';
+
+      // show all schools again by removing the filter
+      map.setFilter(LAYERS.Schools, null);
+    }
   }
 }
 
-function addSidebarToggleLayerEvent() {
-  Object.values(LAYERS).forEach((layer) => {
-    const sidebarItem = document.getElementById(layer + "-toggle")
-    const divItems = Array.from(sidebarItem.children)
-    const openIcon = divItems[1]
-    const closeIcon = divItems[2]
-  
-    openIcon.addEventListener("click", (e) => {
-      openIcon.classList.add("hidden")
-      closeIcon.classList.remove("hidden")
-      if (layer === LAYERS.BikeShareStations) {
-        toggleDynamicBikeShareLayerVisibility(false)
-      } else {
-        toggleStaticLayerVisibility(layer, false)
-      }
-    })
-    closeIcon.addEventListener("click", (e) => {
-      closeIcon.classList.add("hidden")
-      openIcon.classList.remove("hidden")
-      if (layer === LAYERS.BikeShareStations) {
-        toggleDynamicBikeShareLayerVisibility(true)
-      } else {
-        toggleStaticLayerVisibility(layer, true)
-      }
-    })
-  })
- }
+// Helper function to toggle the visibility of a static layer on map
+// layer: the layer id
+// visible: true or false
+function toggleStaticLayerVisibility(map, layer, visible) {
+  if (visible) {
+    map.setLayoutProperty(layer, 'visibility', 'visible');
+  } else {
+    map.setLayoutProperty(layer, 'visibility', 'none');
+  }
+
+  // show or hide the layer in the legend using
+  // helper function implemented  in legend-control.js
+  toggleLayerLegend(layer, visible);
+}
+
+// Helper function to toggle the visibility of the dynamic bike share stations layer on map
+// visible: true or false
+function toggleDynamicBikeShareLayerVisibility(map, visible) {
+  if (visible) {
+    // need to fetch the current bike share data first and create
+    // new GeoJSON features based on new data
+    fetchCurrentBikeShareData().then((bikeShareData) => {
+      geojsonFeaturesList = bikeShareData.map((station) => {
+        return {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [station.lon, station.lat],
+          },
+          properties: {
+            name: station.name,
+            num_bikes_available: station.num_bikes_available,
+            num_docks_available: station.num_docks_available,
+            is_charging_station: station.is_charging_station,
+          },
+        };
+      });
+      // create a new GeoJSON feature collection
+      geojsonFeaturesCollection = {
+        type: 'FeatureCollection',
+        features: geojsonFeaturesList,
+      };
+      // set the new data to the source
+      map.getSource('bike-share-data').setData(geojsonFeaturesCollection);
+
+      map.setLayoutProperty('bike-share-stations', 'visibility', 'visible');
+    });
+  } else {
+    map.setLayoutProperty('bike-share-stations', 'visibility', 'none');
+  }
+
+  // show or hide the layer in the legend using
+  // helper function implemented  in legend-control.js
+  toggleLayerLegend('bike-share-stations', visible);
+}

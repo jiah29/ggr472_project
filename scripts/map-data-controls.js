@@ -332,7 +332,6 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
     };
   });
 
-
   // then add the GeoJSON feature collection as a source and layer to the map
   map.addSource('bike-share-data', {
     type: 'geojson',
@@ -353,44 +352,6 @@ function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
   });
 
   // show or hide layer in legend based on visible argument
-  toggleLayerLegend('bike-share-stations', visible);
-}
-
-// ============================================================================
-// Functions to toggle the visibility of static and dynamic layers
-// ============================================================================
-
-// Function to toggle the visibility of a static layer
-// layer: the layer id
-// visible: true or false
-function toggleStaticLayerVisibility(layer, visible) {
-  if (visible) {
-    map.setLayoutProperty(layer, 'visibility', 'visible');
-  } else {
-    map.setLayoutProperty(layer, 'visibility', 'none');
-  }
-  // show or hide the layer in the legend
-  toggleLayerLegend(layer, visible);
-}
-
-// Function to toggle the visibility of the dynamic bike share stations layer
-// visible: true or false
-function toggleDynamicBikeShareLayerVisibility(visible) {
-  if (visible) {
-    // need to fetch the current bike share data first then add the layer
-    fetchCurrentBikeShareData().then((bikeShareData) => {
-      addBikeShareStationsSourceAndLayer(bikeShareData, (visible = true));
-    });
-  } else {
-    // simply remove the layer if it exists
-    if (map.getSource('bike-share-data')) {
-      map.removeSource('bike-share-data')
-    }
-    if (map.getLayer('bike-share-stations')) {
-      map.removeLayer('bike-share-stations');
-    }
-  }
-  // show or hide the layer in the legend
   toggleLayerLegend('bike-share-stations', visible);
 }
 
@@ -465,4 +426,4 @@ addPopUpToDrawnRoutesEvent(map, drawControl);
 // add event listener geocoder when it returns a result
 addGeocoderResultEvent(map, geocoder);
 // add event listener to sidebar item to toggle on and off layer
-addSidebarToggleLayerEvent()
+addSidebarItemToggleLayerEvent(map);
