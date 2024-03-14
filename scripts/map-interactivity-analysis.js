@@ -91,23 +91,32 @@ function closeSchoolFocusModeEvent(map) {
 // that toggles on and off map layers
 function addSidebarItemToggleLayerEvent(map) {
   Object.values(LAYERS).forEach((layer) => {
+    // find the sidebar item corresponding to the layer
     const sidebarItem = document.getElementById(layer + '-toggle');
+    // get the open and close eye icons from the sidebar item
     const divItems = Array.from(sidebarItem.children);
     const openIcon = divItems[1];
     const closeIcon = divItems[2];
 
+    // add event listeners to the open eye icon
     openIcon.addEventListener('click', (e) => {
+      // when open eye icon is clicked, hide it and show the close eye icon
       openIcon.classList.add('hidden');
       closeIcon.classList.remove('hidden');
+      // toggle on the visibility of the layer on the map
       if (layer === LAYERS.BikeShareStations) {
         toggleDynamicBikeShareLayerVisibility(map, false);
       } else {
         toggleStaticLayerVisibility(map, layer, false);
       }
     });
+
+    // add event listeners to the close eye icon
     closeIcon.addEventListener('click', (e) => {
+      // when close eye icon is clicked, hide it and show the open eye icon
       closeIcon.classList.add('hidden');
       openIcon.classList.remove('hidden');
+      // toggle off the visibility of the layer on the map
       if (layer === LAYERS.BikeShareStations) {
         toggleDynamicBikeShareLayerVisibility(map, true);
       } else {
