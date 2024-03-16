@@ -96,14 +96,14 @@ body {
         position: absolute;
         top: 10px;
         left: 20px;
-        z-index: 2; /* make sure that the button is on top of the map */
+        z-index: 3; /* make sure that the button is on top of everything */
         cursor: pointer;
         width: fit-content;
         font-size: x-large;
         display: none; /* by default, hide the open sidebar button */
       }
 
-      /* styling for the focus indicator */
+      /* styling for the focus indicator containr */
       #school-focus-indicator-container {
         display: none;
         position: absolute;
@@ -111,7 +111,7 @@ body {
         width: 100%;
         z-index: 2;
 
-        /* styling for the indicator container that should be
+        /* styling for the indicator content that should be
         centred in the #school-focus-indicator-container section*/
         #indicator-content {
           position: relative;
@@ -162,27 +162,55 @@ body {
     color: dimgray;
     padding-left: 40px;
     padding-right: 40px;
+
+    .italicized {
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+      /* font-weight: bold; */
+      font-style: italic;
+      color: dimgray;
+      padding-bottom: 10px;
+      font-size: large;
+    }
+
+    .paragraph {
+      color: black;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+        sans-serif;
+      font-size: large;
+    }
   }
 
-  .italicized {
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    /* font-weight: bold; */
-    font-style: italic;
-    color: dimgray;
-    padding-bottom: 10px;
-    font-size: large;
-  }
-
-  .paragraph {
-    color: black;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
-      sans-serif;
-    font-size: large;
-  }
-
+  /* styling for the instructions modal content */
   .modal-body {
     padding-left: 30px;
     padding-right: 30px;
     font-family: Arial, Helvetica, sans-serif;
+  }
+
+  /* styling for the buffer controls container */
+  #school-buffer-controls {
+    display: none;
+    position: absolute;
+    top: 39px;
+    width: 100%;
+    z-index: 2;
+
+    /* styling for the buffer controls content */
+    #controls-switches {
+      position: relative;
+      margin: auto;
+      width: fit-content;
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.75);
+      text-align: center;
+
+      /* make sure each switches is next to each other */
+      div {
+        display: inline-block;
+        margin: 0 10px;
+      }
+    }
   }
 }

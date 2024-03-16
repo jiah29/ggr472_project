@@ -212,7 +212,7 @@ function addGeocoderResultEvent(map, geocoder) {
       // fly to the school using coordinates in data source instead of the geocoder result
       map.flyTo({
         center: result[0].geometry.coordinates,
-        zoom: 15,
+        zoom: 14,
       });
     } else {
       // if the school is not found, show the school focus mode indicator with failure message
@@ -245,7 +245,7 @@ function addZoomInToSchoolEventOnDblClick(map) {
     setTimeout(() => {
       map.flyTo({
         center: coordinates,
-        zoom: 15,
+        zoom: 14,
       });
     }, 10);
     schoolInFocus = e.features[0].properties.SCH_NAM3;
@@ -317,6 +317,21 @@ function addBikeSharePopupEvent(map) {
       .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
       .addTo(map);
   });
+}
+
+// Function to add event listener to buffer toggle switches
+// map: mapbox map object to add event listener to
+function addSchoolBufferToggleEvent(map) {
+  document
+    .getElementById('walking-buffer-toggle')
+    .addEventListener('change', () => {
+      updateSchoolBufferVisibility(map);
+    });
+  document
+    .getElementById('cycling-buffer-toggle')
+    .addEventListener('change', () => {
+      updateSchoolBufferVisibility(map);
+    });
 }
 
 // ============================================================================
@@ -462,6 +477,9 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
       document.getElementById('school-in-focus').innerHTML =
         'School in Focus: ' + schoolInFocus;
 
+      // show the school buffers controls
+      document.getElementById('school-buffer-controls').style.display = 'block';
+
       // hide all other schools through filter
       map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
     } else {
@@ -469,6 +487,9 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
       document.getElementById(
         'school-focus-indicator-container',
       ).style.display = 'none';
+
+      // also hide the school buffers controls
+      document.getElementById('school-buffer-controls').style.display = 'none';
 
       // show all schools again by removing the filter
       map.setFilter(LAYERS.Schools, null);
@@ -504,6 +525,25 @@ function addSchoolBufferFeature(map, schoolFeature) {
 // Function to remove all school buffers from the map
 // map: mapbox map object
 function removeAllSchoolBuffers(map) {
+  // empty the buffer data source
   bufferDataSource.features = [];
+  // update the source
   map.getSource('school-buffers').setData(bufferDataSource);
+}
+
+// Function to ypdate school buffers visibility on map
+// map: mapbox map object
+// bufferType: 'WALKING-BUFFER' or 'CYCLING-BUFFER'
+// visible: true or false
+function updateSchoolBufferVisibility(map) {
+  // check and see which buffer will be on
+  var visible = [];
+  if (document.getElementById('walking-buffer-toggle').checked) {
+    visible.push('WALKING-BUFFER');
+  }
+  if (document.getElementById('cycling-buffer-toggle').checked) {
+    visible.push('CYCLING-BUFFER');
+  }
+  // set the filter to show the buffers that are checked
+  map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);
 }

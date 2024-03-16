@@ -469,3 +469,5 @@ addSubwayPopupEvent(map);
 addBikeSharePopupEvent(map);
 // add event listener to sidebar item to toggle on and off layer
 addSidebarItemToggleLayerEvent(map);
+// add event listener to toggle school buffer layer
+addSchoolBufferToggleEvent(map);
