@@ -16,6 +16,14 @@ function toggleLayerLegend(layer, visible) {
     // otherwise use the toggleLineLegend function
     toggleLineLegend(layer, visible);
   }
+  legend = document.getElementById('legend');
+  if (legend.children.length === 0) {
+    // if the legend is empty, hide the legend
+    legend.style.display = 'none';
+  } else {
+    // otherwise make the legend visible
+    legend.style.display = 'block';
+  }
 }
 
 // Function to control a symbol layer in the legend
