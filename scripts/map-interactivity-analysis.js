@@ -521,8 +521,9 @@ function addSchoolBufferFeature(map, schoolFeature) {
   walkBuffer.properties.TYPE = 'WALKING-BUFFER';
 
   // add the buffers to the school buffers features data source
-  bufferDataSource.features.push(walkBuffer);
+  // add cycling buffer first to avoid overlap with walking buffer
   bufferDataSource.features.push(cycleBuffer);
+  bufferDataSource.features.push(walkBuffer);
 
   // set the new source data to be the updated buffer data source
   map.getSource('school-buffers').setData(bufferDataSource);
@@ -542,13 +543,15 @@ function removeAllSchoolBuffers(map) {
 // bufferType: 'WALKING-BUFFER' or 'CYCLING-BUFFER'
 // visible: true or false
 function updateSchoolBufferVisibility(map) {
-  // check and see which buffer will be on
+  // create a list to store the visible buffers
   var visible = [];
-  if (document.getElementById('walking-buffer-toggle').checked) {
-    visible.push('WALKING-BUFFER');
-  }
+  // if cycling buffer is checked, add it to the list first to avoid overlap with the walking buffer
   if (document.getElementById('cycling-buffer-toggle').checked) {
     visible.push('CYCLING-BUFFER');
+  }
+  // if walking buffer is checked, add it to the list
+  if (document.getElementById('walking-buffer-toggle').checked) {
+    visible.push('WALKING-BUFFER');
   }
   // set the filter to show the buffers that are checked
   map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);

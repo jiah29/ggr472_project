@@ -210,6 +210,16 @@ body {
       div {
         display: inline-block;
         margin: 0 10px;
+
+        #cycle-buffer-icon {
+          color: #ff0000;
+          opacity: 0.75;
+        }
+
+        #walk-buffer-icon {
+          color: #00ffff;
+          opacity: 0.75;
+        }
       }
     }
   }
