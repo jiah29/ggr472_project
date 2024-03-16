@@ -34,6 +34,7 @@ const geocoder = new MapboxGeocoder({
 });
 
 // Add the geocoder to the sidebar
+// put this outside map onload function to make sure it is added to the navbar even without map
 document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 
 map.on('load', function () {
@@ -64,6 +65,10 @@ map.on('load', function () {
   fetchCurrentBikeShareData().then((bikeShareData) => {
     addBikeShareStationsSourceAndLayer(bikeShareData, (visible = false));
   });
+
+  // add schools buffer source and layer
+  // set to true by default - buffer always showing if there is one
+  addBuffersSourceAndLayer((visible = true));
 });
 
 // ============================================================================
@@ -262,6 +267,35 @@ function addParksSourceAndLayer(visible) {
   toggleLayerLegend('parks', visible);
 }
 
+function addBuffersSourceAndLayer(visible) {
+  map.addSource('school-buffers', {
+    type: 'geojson',
+    data: bufferDataSource,
+  });
+
+  map.addLayer({
+    id: 'school-buffers-layer',
+    type: 'fill',
+    source: 'school-buffers',
+    paint: {
+      // set fill color based on TYPE property
+      'fill-color': [
+        'match',
+        ['get', 'TYPE'],
+        'WALKING-BUFFER',
+        '#00ffff',
+        'CYCLING-BUFFER',
+        '#ff0000',
+        '#000000', // if no match - should not reach here
+      ],
+      'fill-opacity': 0.5,
+    },
+    layout: {
+      visibility: visible ? 'visible' : 'none',
+    },
+  });
+}
+
 // ============================================================================
 // Functions to add dynamic sources and layers to the map that require
 // fetching data from an API
@@ -418,7 +452,7 @@ addSidebarOpenEvent(map);
 // add event listener to close school focus mode
 closeSchoolFocusModeEvent(map);
 // add hover event listener to change cursor when hovering over features
-changeCursorToPointerOnHover(map);
+changeCursorToPointerOnHoverEvent(map);
 // add zoom to school event on double click
 addZoomInToSchoolEventOnDblClick(map);
 // add event listener to drawn routes to add pop up

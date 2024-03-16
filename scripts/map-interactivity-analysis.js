@@ -29,9 +29,17 @@ var drawModeChanges = false;
 // NOTE: We are allowing only 1 route pop up at a time to simplify the code
 // variable to store the current user-drawn route pop up showing
 var currentRoutePopup = null;
+// Data source for school buffers - added dynamically via user events
+var bufferDataSource = {
+  type: 'FeatureCollection',
+  features: [],
+};
+// variable to differentiate between single and double click (used for school layers
+// which supports double click and single click events)
+var isDblClick = false;
 
 // ============================================================================
-// HTML Elements Interactivity
+// HTML Elements Events Interactivity
 // ============================================================================
 
 // Function to add click event listener to close sidebar
@@ -84,6 +92,10 @@ function closeSchoolFocusModeEvent(map) {
         center: [-79.370729, 43.719518],
         zoom: 10,
       });
+      // remove all school buffers from the map if any exists
+      if (bufferDataSource.features.length > 0) {
+        removeAllSchoolBuffers(map);
+      }
     });
 }
 
@@ -162,6 +174,155 @@ function addPopUpToDrawnRoutesEvent(map, drawControl) {
   });
 }
 
+// ============================================================================
+// Map Layer & Features Events Interactivity & Analysis
+// ============================================================================
+
+// Change the cursor to a pointer when the mouse is over all layer
+// map: mapbox map object to add event listener to
+function changeCursorToPointerOnHoverEvent(map) {
+  // change the cursor to pointer for all layers
+  Object.values(LAYERS).forEach((layer) => {
+    map.on('mouseenter', layer, function () {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', layer, function () {
+      map.getCanvas().style.cursor = '';
+    });
+  });
+}
+
+// Function when geocoder is done searching for a school
+// map: mapbox map object where the geocoder is used
+// geocoder: Geocoder object to add event listener to
+function addGeocoderResultEvent(map, geocoder) {
+  geocoder.on('result', function (e) {
+    // check if the school layer in view has school name = the search text
+    schoolGeocoded = e.result.text;
+    result = map.queryRenderedFeatures({
+      filter: ['==', ['get', 'SCH_NAM3'], schoolGeocoded],
+    });
+
+    if (result.length > 0) {
+      // result found, set the school in focus to the geocoded school and toggle school focus mode
+      schoolInFocus = schoolGeocoded;
+      toggleSchoolFocusModeIndicator(map);
+      // add the school buffer feature to the map
+      addSchoolBufferFeature(map, result[0]);
+      // fly to the school using coordinates in data source instead of the geocoder result
+      map.flyTo({
+        center: result[0].geometry.coordinates,
+        zoom: 15,
+      });
+    } else {
+      // if the school is not found, show the school focus mode indicator with failure message
+      toggleSchoolFocusModeIndicator(map, (geocodeResultFailure = true));
+      // make sure to stay in the same view
+      map.flyTo({
+        center: map.getCenter(),
+        zoom: map.getZoom(),
+      });
+    }
+
+    // hide the geocoder marker icon
+    document.getElementsByClassName('mapboxgl-marker')[0].style.display =
+      'none';
+  });
+}
+
+// Function to add event listener to show zoom in to school
+// when it is double clicked
+// map: mapbox map object to add event listener to
+function addZoomInToSchoolEventOnDblClick(map) {
+  map.on('dblclick', LAYERS.Schools, function (e) {
+    // set isDblClick to true to prevent triggering single click event
+    isDblClick = true;
+    // get the coordinates of the school
+    var coordinates = e.features[0].geometry.coordinates;
+    // zoom in to the school
+    // putting this in a settimeout as a work around without disabling
+    // the default map double click zoom in behaviour
+    setTimeout(() => {
+      map.flyTo({
+        center: coordinates,
+        zoom: 15,
+      });
+    }, 10);
+    schoolInFocus = e.features[0].properties.SCH_NAM3;
+    toggleSchoolFocusModeIndicator(map);
+    addSchoolBufferFeature(map, e.features[0]);
+  });
+}
+
+// Function to add popup window with info when single click on a school
+function addSchoolPopupEvent(map) {
+  map.on('click', 'schools', (e) => {
+    isDblClick = false; // reset the double click flag
+
+    // store feature and click location to access it in the setTimeout
+    // since the event object will be lost after 500ms
+    const feature = e.features[0];
+    const location = e.lngLat;
+
+    // set a timeout to check if it is a double click
+    setTimeout(() => {
+      if (!isDblClick) {
+        // if it is not a double click, show the popup
+        new mapboxgl.Popup()
+          .setLngLat(location)
+          .setHTML(
+            '<b>School:</b> ' +
+              feature.properties.SCH_NAM3 +
+              '<br><b>Address:</b> ' +
+              feature.properties.ADDRESS4 +
+              '<br><b>District:</b> ' +
+              feature.properties.MUNICIP12,
+          )
+          .addTo(map);
+      }
+    }, 500);
+  });
+}
+
+// Function to add popup window with info when single click on a park
+function addParkPopupEvent(map) {
+  map.on('click', 'parks', (e) => {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML(
+        '<b>Park:</b> ' +
+          e.features[0].properties.ASSET_N4 +
+          '<br><b>Address:</b> ' +
+          e.features[0].properties.ADDRESS7,
+      )
+      .addTo(map);
+  });
+}
+
+// Function to add popup window with info when single click on a subway station
+function addSubwayPopupEvent(map) {
+  map.on('click', 'subway-stations', (e) => {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML('<b>Subway Station:</b> ' + e.features[0].properties.Station_Na)
+      .addTo(map);
+  });
+}
+
+// Function to add popup window with info when single click on a bike share station
+function addBikeSharePopupEvent(map) {
+  map.on('click', 'bike-share-stations', (e) => {
+    new mapboxgl.Popup()
+      .setLngLat(e.lngLat)
+      .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
+      .addTo(map);
+  });
+}
+
+// ============================================================================
+// Helper Functions to support interactivity and analysis
+// ============================================================================
+
 // Helper function to add pop up to drawn routes
 // routeFeature: GeoJSON Feature object representing the drawn route
 // map: mapbox map object to add the pop up to
@@ -208,129 +369,6 @@ function closeRoutePopUp() {
   // remove the current route pop up if it exists
   if (currentRoutePopup) {
     currentRoutePopup.remove();
-  }
-}
-
-// ============================================================================
-// Map Layer & Features Interactivity & Analysis
-// ============================================================================
-
-// Function when geocoder is done searching for a school
-// map: mapbox map object where the geocoder is used
-// geocoder: Geocoder object to add event listener to
-function addGeocoderResultEvent(map, geocoder) {
-  geocoder.on('result', function (e) {
-    // check if the school layer in view has school name = the search text
-    schoolGeocoded = e.result.text;
-    result = map.queryRenderedFeatures({
-      filter: ['==', ['get', 'SCH_NAM3'], schoolGeocoded],
-    });
-
-    if (result.length > 0) {
-      // result found, set the school in focus to the geocoded school and toggle school focus mode
-      schoolInFocus = schoolGeocoded;
-      toggleSchoolFocusModeIndicator(map);
-      // fly to the school using coordinates in data source instead of the geocoder result
-      map.flyTo({
-        center: result[0].geometry.coordinates,
-        zoom: 15,
-      });
-    } else {
-      // if the school is not found, show the school focus mode indicator with failure message
-      toggleSchoolFocusModeIndicator(map, (geocodeResultFailure = true));
-      // make sure to stay in the same view
-      map.flyTo({
-        center: map.getCenter(),
-        zoom: map.getZoom(),
-      });
-    }
-
-    // hide the geocoder marker icon
-    document.getElementsByClassName('mapboxgl-marker')[0].style.display =
-      'none';
-  });
-}
-
-// Change the cursor to a pointer when the mouse is over all layer
-// map: mapbox map object to add event listener to
-function changeCursorToPointerOnHover(map) {
-  // change the cursor to pointer for all layers
-  Object.values(LAYERS).forEach((layer) => {
-    map.on('mouseenter', layer, function () {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', layer, function () {
-      map.getCanvas().style.cursor = '';
-    });
-  });
-}
-
-// Function to add event listener to show zoom in to school
-// when it is double clicked
-// map: mapbox map object to add event listener to
-function addZoomInToSchoolEventOnDblClick(map) {
-  map.on('dblclick', LAYERS.Schools, function (e) {
-    // get the coordinates of the school
-    var coordinates = e.features[0].geometry.coordinates;
-    // zoom in to the school
-    // putting this in a settimeout as a work around without disabling
-    // the default map double click zoom in behaviour
-    setTimeout(() => {
-      map.flyTo({
-        center: coordinates,
-        zoom: 15,
-      });
-    }, 10);
-    schoolInFocus = e.features[0].properties.SCH_NAM3;
-    toggleSchoolFocusModeIndicator(map);
-  });
-}
-
-// Helper function to toggle the school focus mode indicator and view.
-// map: mapbox map object
-// geocodeResultFailure: whether to show the geocoder failure message (default is false)
-function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
-  // show geocoder failure message in indicator
-  if (geocodeResultFailure) {
-    document.getElementById('school-focus-indicator-container').style.display =
-      'block';
-    document.getElementById('school-in-focus').innerHTML =
-      'No result found. Search text may not exist in the TDSB schools data source. \
-      <br> \
-      Please manually search for the school on the map.';
-
-    // hide the close indicator button - this will be closed automatically
-    document.getElementById('focus-close-button').style.display = 'none';
-
-    // close indicator after 5 seconds
-    setTimeout(() => {
-      document.getElementById(
-        'school-focus-indicator-container',
-      ).style.display = 'none';
-      // also turn the close indicator button back on since that is the default state
-      document.getElementById('focus-close-button').style.display = 'inline';
-    }, 10000);
-  } else {
-    // not showing failure message, so check if there is a school in focus
-    if (schoolInFocus) {
-      // there is a school in focus, display the school focus indicator with the school name
-      document.getElementById(
-        'school-focus-indicator-container',
-      ).style.display = 'block';
-      document.getElementById('school-in-focus').innerHTML =
-        'School in Focus: ' + schoolInFocus;
-
-      // hide all other schools through filter
-      map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
-    } else {
-      // otherwise, hide the school focus indicator
-      document.getElementById(
-        'school-focus-indicator-container',
-      ).style.display = 'none';
-
-      // show all schools again by removing the filter
-      map.setFilter(LAYERS.Schools, null);
-    }
   }
 }
 
@@ -390,54 +428,82 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
   toggleLayerLegend('bike-share-stations', visible);
 }
 
-// Function to add popup window with info when single click on a school
-function addSchoolPopupEvent(map) {
-  map.on('click', 'schools', (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(
-        '<b>School:</b> ' +
-          e.features[0].properties.SCH_NAM3 +
-          '<br><b>Address:</b> ' +
-          e.features[0].properties.ADDRESS4 +
-          '<br><b>District:</b> ' +
-          e.features[0].properties.MUNICIP12,
-      )
-      .addTo(map);
-  });
+// Helper function to toggle the school focus mode indicator and view.
+// map: mapbox map object
+// geocodeResultFailure: whether to show the geocoder failure message (default is false)
+function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
+  // show geocoder failure message in indicator
+  if (geocodeResultFailure) {
+    document.getElementById('school-focus-indicator-container').style.display =
+      'block';
+    document.getElementById('school-in-focus').innerHTML =
+      'No result found. Search text may not exist in the TDSB schools data source. \
+      <br> \
+      Please manually search for the school on the map.';
+
+    // hide the close indicator button - this will be closed automatically
+    document.getElementById('focus-close-button').style.display = 'none';
+
+    // close indicator after 5 seconds
+    setTimeout(() => {
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'none';
+      // also turn the close indicator button back on since that is the default state
+      document.getElementById('focus-close-button').style.display = 'inline';
+    }, 10000);
+  } else {
+    // not showing failure message, so check if there is a school in focus
+    if (schoolInFocus) {
+      // there is a school in focus, display the school focus indicator with the school name
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'block';
+      document.getElementById('school-in-focus').innerHTML =
+        'School in Focus: ' + schoolInFocus;
+
+      // hide all other schools through filter
+      map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
+    } else {
+      // otherwise, hide the school focus indicator
+      document.getElementById(
+        'school-focus-indicator-container',
+      ).style.display = 'none';
+
+      // show all schools again by removing the filter
+      map.setFilter(LAYERS.Schools, null);
+    }
+  }
 }
 
-// Function to add popup window with info when single click on a park
-function addParkPopupEvent(map) {
-  map.on('click', 'parks', (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(
-        '<b>Park:</b> ' +
-          e.features[0].properties.ASSET_N4 +
-          '<br><b>Address:</b> ' +
-          e.features[0].properties.ADDRESS7,
-      )
-      .addTo(map);
+// Function to add feature to the school buffers source
+// when a school is focused on
+// map: mapbox map object
+// schoolFeature: feature object representing the school
+function addSchoolBufferFeature(map, schoolFeature) {
+  // create a new buffer feature for walking and cycling
+  cycleBufferSize = CYCLING_SPEED * 5; // 5 minutes cycling buffer
+  cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
+    units: 'meters',
   });
+  cycleBuffer.properties.TYPE = 'CYCLING-BUFFER';
+  walkBufferSize = WALKING_SPEED * 5; // 5 minutes walking buffer
+  walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
+    units: 'meters',
+  });
+  walkBuffer.properties.TYPE = 'WALKING-BUFFER';
+
+  // add the buffers to the school buffers features data source
+  bufferDataSource.features.push(walkBuffer);
+  bufferDataSource.features.push(cycleBuffer);
+
+  // set the new source data to be the updated buffer data source
+  map.getSource('school-buffers').setData(bufferDataSource);
 }
 
-// Function to add popup window with info when single click on a subway station
-function addSubwayPopupEvent(map) {
-  map.on('click', 'subway-stations', (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML('<b>Subway Station:</b> ' + e.features[0].properties.Station_Na)
-      .addTo(map);
-  });
-}
-
-// Function to add popup window with info when single click on a bike share station
-function addBikeSharePopupEvent(map) {
-  map.on('click', 'bike-share-stations', (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
-      .addTo(map);
-  });
+// Function to remove all school buffers from the map
+// map: mapbox map object
+function removeAllSchoolBuffers(map) {
+  bufferDataSource.features = [];
+  map.getSource('school-buffers').setData(bufferDataSource);
 }
