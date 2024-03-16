@@ -222,6 +222,9 @@ function addGeocoderResultEvent(map, geocoder) {
         center: map.getCenter(),
         zoom: map.getZoom(),
       });
+      // remove existing school in focus if any and remove any school buffers
+      schoolInFocus = null;
+      removeAllSchoolBuffers(map);
     }
 
     // hide the geocoder marker icon
@@ -458,6 +461,9 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 
     // hide the close indicator button - this will be closed automatically
     document.getElementById('focus-close-button').style.display = 'none';
+
+    // make sure school buffer controls are hidden
+    document.getElementById('school-buffer-controls').style.display = 'none';
 
     // close indicator after 5 seconds
     setTimeout(() => {
