@@ -138,6 +138,21 @@ function addSidebarItemToggleLayerEvent(map) {
   });
 }
 
+// Function to add event listener to buffer toggle switches
+// map: mapbox map object to add event listener to
+function addSchoolBufferToggleEvent(map) {
+  document
+    .getElementById('walking-buffer-toggle')
+    .addEventListener('change', () => {
+      updateSchoolBufferVisibility(map);
+    });
+  document
+    .getElementById('cycling-buffer-toggle')
+    .addEventListener('change', () => {
+      updateSchoolBufferVisibility(map);
+    });
+}
+
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
@@ -259,7 +274,7 @@ function addZoomInToSchoolEventOnDblClick(map) {
 
 // Function to add popup window with info when single click on a school
 function addSchoolPopupEvent(map) {
-  map.on('click', 'schools', (e) => {
+  map.on('click', LAYERS.Schools, (e) => {
     isDblClick = false; // reset the double click flag
 
     // store feature and click location to access it in the setTimeout
@@ -289,7 +304,7 @@ function addSchoolPopupEvent(map) {
 
 // Function to add popup window with info when single click on a park
 function addParkPopupEvent(map) {
-  map.on('click', 'parks', (e) => {
+  map.on('click', LAYERS.Parks, (e) => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML(
@@ -304,7 +319,7 @@ function addParkPopupEvent(map) {
 
 // Function to add popup window with info when single click on a subway station
 function addSubwayPopupEvent(map) {
-  map.on('click', 'subway-stations', (e) => {
+  map.on('click', LAYERS.SubwayStations, (e) => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML('<b>Subway Station:</b> ' + e.features[0].properties.Station_Na)
@@ -314,27 +329,12 @@ function addSubwayPopupEvent(map) {
 
 // Function to add popup window with info when single click on a bike share station
 function addBikeSharePopupEvent(map) {
-  map.on('click', 'bike-share-stations', (e) => {
+  map.on('click', LAYERS.BikeShareStations, (e) => {
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
       .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
       .addTo(map);
   });
-}
-
-// Function to add event listener to buffer toggle switches
-// map: mapbox map object to add event listener to
-function addSchoolBufferToggleEvent(map) {
-  document
-    .getElementById('walking-buffer-toggle')
-    .addEventListener('change', () => {
-      updateSchoolBufferVisibility(map);
-    });
-  document
-    .getElementById('cycling-buffer-toggle')
-    .addEventListener('change', () => {
-      updateSchoolBufferVisibility(map);
-    });
 }
 
 // ============================================================================
