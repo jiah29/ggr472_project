@@ -428,7 +428,7 @@ function addHighlightFeatureOnDblClickEvent(map) {
           // remove the marker from the highlightFeature object
           highlightFeature[layer].splice(
             highlightFeature[layer].indexOf(marker),
-            1,
+            1, // remove 1 element from the index above
           );
         });
       });
