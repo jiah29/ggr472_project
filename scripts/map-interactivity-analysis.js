@@ -34,9 +34,20 @@ var bufferDataSource = {
   type: 'FeatureCollection',
   features: [],
 };
-// variable to differentiate between single and double click (used for school layers
-// which supports double click and single click events)
+// variable to differentiate between single and double click (used for all layers
+// that supports both double click and single click events)
 var isDblClick = false;
+// variable to store the highlight marker for each layer feature
+var highlightFeature = {
+  parks: [],
+  'speed-enforcement': [],
+  'subway-stations': [],
+  'traffic-calming': [],
+  'watch-your-speed-program': [],
+  'bike-share-stations': [],
+  'cycling-network': [],
+  'pedestrian-network': [],
+};
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -110,7 +121,7 @@ function addSidebarItemToggleLayerEvent(map) {
     const openIcon = divItems[1];
     const closeIcon = divItems[2];
 
-    // add event listeners to the open eye icon
+    // add event listeners to the open eye icon to turn off layers
     openIcon.addEventListener('click', (e) => {
       // when open eye icon is clicked, hide it and show the close eye icon
       openIcon.classList.add('hidden');
@@ -121,9 +132,14 @@ function addSidebarItemToggleLayerEvent(map) {
       } else {
         toggleStaticLayerVisibility(map, layer, false);
       }
+
+      // hide the highlight markers for the layer when layer is turned off
+      highlightFeature[layer].forEach((marker) => {
+        marker.getElement().style.display = 'none';
+      });
     });
 
-    // add event listeners to the close eye icon
+    // add event listeners to the close eye icon to turn on layers
     closeIcon.addEventListener('click', (e) => {
       // when close eye icon is clicked, hide it and show the open eye icon
       closeIcon.classList.add('hidden');
@@ -134,6 +150,11 @@ function addSidebarItemToggleLayerEvent(map) {
       } else {
         toggleStaticLayerVisibility(map, layer, true);
       }
+
+      // unhide the highlight markers for the layer when layer is turned on
+      highlightFeature[layer].forEach((marker) => {
+        marker.getElement().style.display = 'block';
+      });
     });
   });
 }
@@ -305,35 +326,113 @@ function addSchoolPopupEvent(map) {
 // Function to add popup window with info when single click on a park
 function addParkPopupEvent(map) {
   map.on('click', LAYERS.Parks, (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML(
-        '<b>Park:</b> ' +
-          e.features[0].properties.ASSET_N4 +
-          '<br><b>Address:</b> ' +
-          e.features[0].properties.ADDRESS7,
-      )
-      .addTo(map);
+    isDblClick = false; // reset the double click flag
+
+    // store feature and location for reference after 500ms
+    const feature = e.features[0];
+    const location = e.lngLat;
+
+    setTimeout(() => {
+      if (!isDblClick) {
+        // if it is not a double click, show the popup
+        new mapboxgl.Popup()
+          .setLngLat(location)
+          .setHTML(
+            '<b>Park:</b> ' +
+              feature.properties.ASSET_N4 +
+              '<br><b>Address:</b> ' +
+              feature.properties.ADDRESS7,
+          )
+          .addTo(map);
+      }
+    }, 500);
   });
 }
 
 // Function to add popup window with info when single click on a subway station
 function addSubwayPopupEvent(map) {
   map.on('click', LAYERS.SubwayStations, (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML('<b>Subway Station:</b> ' + e.features[0].properties.Station_Na)
-      .addTo(map);
+    isDblClick = false; // reset the double click flag
+
+    // store feature and location for reference after 500ms
+    const feature = e.features[0];
+    const location = e.lngLat;
+
+    setTimeout(() => {
+      if (!isDblClick) {
+        // if it is not a double click, show the popup
+        new mapboxgl.Popup()
+          .setLngLat(location)
+          .setHTML('<b>Subway Station:</b> ' + feature.properties.Station_Na)
+          .addTo(map);
+      }
+    }, 500);
   });
 }
 
 // Function to add popup window with info when single click on a bike share station
 function addBikeSharePopupEvent(map) {
   map.on('click', LAYERS.BikeShareStations, (e) => {
-    new mapboxgl.Popup()
-      .setLngLat(e.lngLat)
-      .setHTML('<b>Bike Share Station:</b> ' + e.features[0].properties.name)
-      .addTo(map);
+    isDblClick = false; // reset the double click flag
+
+    // store feature and location for reference after 500ms
+    const feature = e.features[0];
+    const location = e.lngLat;
+
+    setTimeout(() => {
+      if (!isDblClick) {
+        // if it is not a double click, show the popup
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(
+            '<b>Bike Share Station:</b> ' + e.features[0].properties.name,
+          )
+          .addTo(map);
+      }
+    }, 500);
+  });
+}
+
+// Function to add double click event to all layer features (except schools) to highlight a feature
+function addHighlightFeatureOnDblClickEvent(map) {
+  Object.values(LAYERS).forEach((layer) => {
+    if (layer !== LAYERS.Schools) {
+      map.on('dblclick', layer, function (e) {
+        // set isDblClick to true to prevent triggering single click event
+        isDblClick = true;
+
+        var coordinates; // store the feature coordinate or click location
+
+        if (e.features[0].geometry.type === 'Point') {
+          // get the feature coordinate that was double clicked if it is a point
+          var feature = e.features[0];
+          coordinates = feature.geometry.coordinates;
+        } else {
+          // use the click location if it is not a point
+          coordinates = e.lngLat;
+        }
+
+        // create a new mapboxgl Marker object to highlight the feature
+        const marker = new mapboxgl.Marker({
+          color: 'red',
+        })
+          .setLngLat(coordinates)
+          .addTo(map);
+
+        // store the marker in the highlightFeature object
+        highlightFeature[layer].push(marker);
+
+        // add event listener to marker to remove when it is double clicked
+        marker.getElement().addEventListener('click', function () {
+          marker.remove();
+          // remove the marker from the highlightFeature object
+          highlightFeature[layer].splice(
+            highlightFeature[layer].indexOf(marker),
+            1, // remove 1 element from the index above
+          );
+        });
+      });
+    }
   });
 }
 
@@ -538,7 +637,7 @@ function removeAllSchoolBuffers(map) {
   map.getSource('school-buffers').setData(bufferDataSource);
 }
 
-// Function to ypdate school buffers visibility on map
+// Function to update school buffers visibility on map
 // map: mapbox map object
 // bufferType: 'WALKING-BUFFER' or 'CYCLING-BUFFER'
 // visible: true or false

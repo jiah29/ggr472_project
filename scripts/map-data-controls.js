@@ -69,6 +69,9 @@ map.on('load', function () {
   // add schools buffer source and layer
   // set to true by default - buffer always showing if there is one
   addBuffersSourceAndLayer((visible = true));
+
+  // disable double click zoom
+  map.doubleClickZoom.disable();
 });
 
 // ============================================================================
@@ -471,3 +474,5 @@ addBikeSharePopupEvent(map);
 addSidebarItemToggleLayerEvent(map);
 // add event listener to toggle school buffer layer
 addSchoolBufferToggleEvent(map);
+// add event listener to highlight feature on double click
+addHighlightFeatureOnDblClickEvent(map);
