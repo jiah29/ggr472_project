@@ -48,6 +48,8 @@ var highlightFeature = {
   'cycling-network': [],
   'pedestrian-network': [],
 };
+// variable to store the current hover popup
+var hoverPopup;
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -383,9 +385,9 @@ function addBikeSharePopupEvent(map) {
       if (!isDblClick) {
         // if it is not a double click, show the popup
         new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
+          .setLngLat(location)
           .setHTML(
-            '<b>Bike Share Station:</b> ' + e.features[0].properties.name,
+            '<b>Bike Share Station:</b> ' + feature.properties.name,
           )
           .addTo(map);
       }
@@ -434,6 +436,36 @@ function addHighlightFeatureOnDblClickEvent(map) {
       });
     }
   });
+}
+
+// Function to add hover event listener to show the estimated distance, cycling time, 
+// and walking time from hovered features to the school in focus
+function addHoverPopUpEvents(map) {
+  // Looping to all the layers
+  Object.values(LAYERS).forEach ((layer) => {
+    // Except school layers
+    if (layer !== LAYERS.Schools) {  
+      // add a new popup when there is a school in focus on hover event,       
+      map.on('mouseenter', layer, (e) => {
+        if (schoolInFocus) {
+          hoverPopup = new mapboxgl.Popup()
+          hoverPopup.setLngLat(e.lngLat)
+              .setHTML(
+              '<b>Distance: 100</b> ' +
+                '<br><b>Estimated Cycling Time:</b> ' +
+                '<br><b>Estimated Walking Time:</b> ')
+              .addTo(map);
+        }
+      })
+
+      // when the mouse leaves the feature, removes the popup
+      map.on('mouseleave', layer, (e) => {
+        if (schoolInFocus) {
+          hoverPopup.remove()
+        }
+      })
+    }
+  })
 }
 
 // ============================================================================
@@ -655,3 +687,5 @@ function updateSchoolBufferVisibility(map) {
   // set the filter to show the buffers that are checked
   map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);
 }
+
+
