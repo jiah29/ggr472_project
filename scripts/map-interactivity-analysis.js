@@ -637,7 +637,7 @@ function removeAllSchoolBuffers(map) {
   map.getSource('school-buffers').setData(bufferDataSource);
 }
 
-// Function to ypdate school buffers visibility on map
+// Function to update school buffers visibility on map
 // map: mapbox map object
 // bufferType: 'WALKING-BUFFER' or 'CYCLING-BUFFER'
 // visible: true or false
