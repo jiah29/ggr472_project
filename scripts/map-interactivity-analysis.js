@@ -50,6 +50,8 @@ var highlightFeature = {
 };
 // variable to store the current hover popup
 var hoverPopup;
+// variable to store the current timeout for showing the geocoder failure message
+var geocodeResultFailureTimeout;
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -605,7 +607,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     document.getElementById('school-buffer-controls').style.display = 'none';
 
     // close indicator after 5 seconds
-    setTimeout(() => {
+    geocodeResultFailureTimeout = setTimeout(() => {
       document.getElementById(
         'school-focus-indicator-container',
       ).style.display = 'none';
@@ -613,6 +615,16 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
       document.getElementById('focus-close-button').style.display = 'inline';
     }, 10000);
   } else {
+    // if there is a pending timeout for showing geocoded failure message,
+    // need to clear it
+    if (geocodeResultFailureTimeout) {
+      clearTimeout(geocodeResultFailureTimeout);
+      // reset the timeout variable
+      geocodeResultFailureTimeout = null;
+      // need to show the close indicator button again
+      document.getElementById('focus-close-button').style.display = 'inline';
+    }
+
     // not showing failure message, so check if there is a school in focus
     if (schoolInFocus) {
       // there is a school in focus, display the school focus indicator with the school name
