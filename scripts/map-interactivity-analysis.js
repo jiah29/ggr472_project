@@ -234,12 +234,20 @@ function changeCursorToPointerOnHoverEvent(map) {
 // map: mapbox map object where the geocoder is used
 // geocoder: Geocoder object to add event listener to
 function addGeocoderResultEvent(map, geocoder) {
+  // instead of directly flying to the geocoded location, we will
+  // check if the school exists in the TDSB schools data source, and
+  // fly to the school if it exists in our data source
   geocoder.on('result', function (e) {
-    // check if the school layer in view has school name = the search text
-    schoolGeocoded = e.result.text;
-    result = map.queryRenderedFeatures({
-      filter: ['==', ['get', 'SCH_NAM3'], schoolGeocoded],
+    // query school source to find all schools with the same name
+    allSchools = map.querySourceFeatures('schools-data', {
+      sourceLayer: 'Toronto_District_School_Board-2h6tqy',
     });
+
+    // filter out the school with the same name as the geocoded school
+    schoolGeocoded = e.result.text;
+    result = allSchools.filter(
+      (school) => school.properties.SCH_NAM3 === schoolGeocoded,
+    );
 
     if (result.length > 0) {
       // result found, set the school in focus to the geocoded school and toggle school focus mode
@@ -386,9 +394,7 @@ function addBikeSharePopupEvent(map) {
         // if it is not a double click, show the popup
         new mapboxgl.Popup()
           .setLngLat(location)
-          .setHTML(
-            '<b>Bike Share Station:</b> ' + feature.properties.name,
-          )
+          .setHTML('<b>Bike Share Station:</b> ' + feature.properties.name)
           .addTo(map);
       }
     }, 500);
@@ -438,34 +444,36 @@ function addHighlightFeatureOnDblClickEvent(map) {
   });
 }
 
-// Function to add hover event listener to show the estimated distance, cycling time, 
+// Function to add hover event listener to show the estimated distance, cycling time,
 // and walking time from hovered features to the school in focus
 function addHoverPopUpEvents(map) {
   // Looping to all the layers
-  Object.values(LAYERS).forEach ((layer) => {
+  Object.values(LAYERS).forEach((layer) => {
     // Except school layers
-    if (layer !== LAYERS.Schools) {  
-      // add a new popup when there is a school in focus on hover event,       
+    if (layer !== LAYERS.Schools) {
+      // add a new popup when there is a school in focus on hover event,
       map.on('mouseenter', layer, (e) => {
         if (schoolInFocus) {
-          hoverPopup = new mapboxgl.Popup()
-          hoverPopup.setLngLat(e.lngLat)
-              .setHTML(
+          hoverPopup = new mapboxgl.Popup();
+          hoverPopup
+            .setLngLat(e.lngLat)
+            .setHTML(
               '<b>Distance: 100</b> ' +
                 '<br><b>Estimated Cycling Time:</b> ' +
-                '<br><b>Estimated Walking Time:</b> ')
-              .addTo(map);
+                '<br><b>Estimated Walking Time:</b> ',
+            )
+            .addTo(map);
         }
-      })
+      });
 
       // when the mouse leaves the feature, removes the popup
       map.on('mouseleave', layer, (e) => {
         if (schoolInFocus) {
-          hoverPopup.remove()
+          hoverPopup.remove();
         }
-      })
+      });
     }
-  })
+  });
 }
 
 // ============================================================================
@@ -687,5 +695,3 @@ function updateSchoolBufferVisibility(map) {
   // set the filter to show the buffers that are checked
   map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);
 }
-
-
