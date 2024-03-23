@@ -52,6 +52,18 @@ var highlightFeature = {
 };
 // variable to store the current hover popup
 var hoverPopup;
+// variable to store popup shown for each layer feature
+var popupFeature = {
+  schools: [],
+  parks: [],
+  'speed-enforcement': [],
+  'subway-stations': [],
+  'traffic-calming': [],
+  'watch-your-speed-program': [],
+  'bike-share-stations': [],
+  'cycling-network': [],
+  'pedestrian-network': [],
+};
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -145,6 +157,11 @@ function addSidebarItemToggleLayerEvent(map) {
         });
       }
 
+      // hide any popup features for the layer when layer is turned off
+      popupFeature[layer].forEach((popup) => {
+        popup.remove();
+      });
+
       // if it is a school layer
       if (layer === LAYERS.Schools) {
         // if there is a school in focus
@@ -179,6 +196,11 @@ function addSidebarItemToggleLayerEvent(map) {
           marker.getElement().style.display = 'block';
         });
       }
+
+      // unhide any popup features for the layer when layer is turned off
+      popupFeature[layer].forEach((popup) => {
+        popup.addTo(map);
+      });
 
       if (layer === LAYERS.Schools) {
         // if there is a school in focus
@@ -349,7 +371,8 @@ function addSchoolPopupEvent(map) {
     setTimeout(() => {
       if (!isDblClick) {
         // if it is not a double click, show the popup
-        new mapboxgl.Popup()
+        const popup = new mapboxgl.Popup();
+        popup
           .setLngLat(location)
           .setHTML(
             '<b>School:</b> ' +
@@ -360,6 +383,8 @@ function addSchoolPopupEvent(map) {
               feature.properties.MUNICIP12,
           )
           .addTo(map);
+        // store the popup in the popupFeature object
+        popupFeature.schools.push(popup);
       }
     }, 500);
   });
@@ -377,7 +402,8 @@ function addParkPopupEvent(map) {
     setTimeout(() => {
       if (!isDblClick) {
         // if it is not a double click, show the popup
-        new mapboxgl.Popup()
+        const popup = new mapboxgl.Popup();
+        popup
           .setLngLat(location)
           .setHTML(
             '<b>Park:</b> ' +
@@ -386,6 +412,8 @@ function addParkPopupEvent(map) {
               feature.properties.ADDRESS7,
           )
           .addTo(map);
+        // store the popup in the popupFeature object
+        popupFeature.parks.push(popup);
       }
     }, 500);
   });
@@ -403,10 +431,13 @@ function addSubwayPopupEvent(map) {
     setTimeout(() => {
       if (!isDblClick) {
         // if it is not a double click, show the popup
-        new mapboxgl.Popup()
+        const popup = new mapboxgl.Popup();
+        popup
           .setLngLat(location)
           .setHTML('<b>Subway Station:</b> ' + feature.properties.Station_Na)
           .addTo(map);
+        // store the popup in the popupFeature object
+        popupFeature['subway-stations'].push(popup);
       }
     }, 500);
   });
@@ -424,10 +455,13 @@ function addBikeSharePopupEvent(map) {
     setTimeout(() => {
       if (!isDblClick) {
         // if it is not a double click, show the popup
-        new mapboxgl.Popup()
+        const popup = new mapboxgl.Popup();
+        popup
           .setLngLat(location)
           .setHTML('<b>Bike Share Station:</b> ' + feature.properties.name)
           .addTo(map);
+        // store the popup in the popupFeature object
+        popupFeature['bike-share-stations'].push(popup);
       }
     }, 500);
   });
@@ -498,9 +532,9 @@ function addHoverPopUpEvents(map) {
         }
       });
 
-      // when the mouse leaves the feature, removes the popup
+      // when the mouse leaves the feature, removes the popup if it exists
       map.on('mouseleave', layer, (e) => {
-        if (isFocusMode) {
+        if (isFocusMode && hoverPopup) {
           hoverPopup.remove();
         }
       });
