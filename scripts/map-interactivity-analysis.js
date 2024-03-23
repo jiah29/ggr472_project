@@ -24,6 +24,8 @@ LAYERS = {
 
 // variable to store the school in focus (used in determining whether a school is in focus)
 var schoolInFocus = null;
+// variable to track if we are in school focus mode
+var isFocusMode = false;
 // flag to track if user draw mode has changed
 var drawModeChanges = false;
 // NOTE: We are allowing only 1 route pop up at a time to simplify the code
@@ -97,8 +99,9 @@ function closeSchoolFocusModeEvent(map) {
   document
     .getElementById('focus-close-button')
     .addEventListener('click', function () {
-      // reset the school in focus to null
+      // reset the school in focus to null and isFocusMode to false
       schoolInFocus = null;
+      isFocusMode = false;
       toggleSchoolFocusModeIndicator(map);
       // fly back to the original view
       map.flyTo({
@@ -135,10 +138,27 @@ function addSidebarItemToggleLayerEvent(map) {
         toggleStaticLayerVisibility(map, layer, false);
       }
 
-      // hide the highlight markers for the layer when layer is turned off
-      highlightFeature[layer].forEach((marker) => {
-        marker.getElement().style.display = 'none';
-      });
+      // hide the highlight markers for the layer, if any, when layer is turned off
+      if (layer in highlightFeature) {
+        highlightFeature[layer].forEach((marker) => {
+          marker.getElement().style.display = 'none';
+        });
+      }
+
+      // if it is a school layer
+      if (layer === LAYERS.Schools) {
+        // if there is a school in focus
+        if (schoolInFocus) {
+          // turn off the school focus mode
+          // this does not remove the school in focus, but just hides the indicator
+          // to make sure we can go back to prev state when layer is turned back on
+          isFocusMode = false;
+          toggleSchoolFocusModeIndicator(map);
+
+          // hide the school buffers map layers by setting visibility to none
+          map.setLayoutProperty('school-buffers-layer', 'visibility', 'none');
+        }
+      }
     });
 
     // add event listeners to the close eye icon to turn on layers
@@ -153,10 +173,27 @@ function addSidebarItemToggleLayerEvent(map) {
         toggleStaticLayerVisibility(map, layer, true);
       }
 
-      // unhide the highlight markers for the layer when layer is turned on
-      highlightFeature[layer].forEach((marker) => {
-        marker.getElement().style.display = 'block';
-      });
+      // unhide the highlight markers for the layer, if any exists before, when layer is turned on
+      if (layer in highlightFeature) {
+        highlightFeature[layer].forEach((marker) => {
+          marker.getElement().style.display = 'block';
+        });
+      }
+
+      if (layer === LAYERS.Schools) {
+        // if there is a school in focus
+        if (schoolInFocus) {
+          // set isFocusMode to true to show the school focus mode indicator
+          isFocusMode = true;
+          toggleSchoolFocusModeIndicator(map);
+          // unhide school buffers map layers
+          map.setLayoutProperty(
+            'school-buffers-layer',
+            'visibility',
+            'visible',
+          );
+        }
+      }
     });
   });
 }
@@ -289,8 +326,11 @@ function addZoomInToSchoolEventOnDblClick(map) {
         zoom: 14,
       });
     }, 10);
+    // set the school in focus to the school that was double clicked and toggle school focus mode
     schoolInFocus = e.features[0].properties.SCH_NAM3;
+    isFocusMode = true;
     toggleSchoolFocusModeIndicator(map);
+    // add the school buffer feature to the map
     addSchoolBufferFeature(map, e.features[0]);
   });
 }
@@ -606,7 +646,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     }, 10000);
   } else {
     // not showing failure message, so check if there is a school in focus
-    if (schoolInFocus) {
+    if (isFocusMode) {
       // there is a school in focus, display the school focus indicator with the school name
       document.getElementById(
         'school-focus-indicator-container',
