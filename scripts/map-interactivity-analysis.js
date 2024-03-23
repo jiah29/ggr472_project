@@ -386,9 +386,7 @@ function addBikeSharePopupEvent(map) {
         // if it is not a double click, show the popup
         new mapboxgl.Popup()
           .setLngLat(location)
-          .setHTML(
-            '<b>Bike Share Station:</b> ' + feature.properties.name,
-          )
+          .setHTML('<b>Bike Share Station:</b> ' + feature.properties.name)
           .addTo(map);
       }
     }, 500);
@@ -438,34 +436,36 @@ function addHighlightFeatureOnDblClickEvent(map) {
   });
 }
 
-// Function to add hover event listener to show the estimated distance, cycling time, 
+// Function to add hover event listener to show the estimated distance, cycling time,
 // and walking time from hovered features to the school in focus
 function addHoverPopUpEvents(map) {
   // Looping to all the layers
-  Object.values(LAYERS).forEach ((layer) => {
+  Object.values(LAYERS).forEach((layer) => {
     // Except school layers
-    if (layer !== LAYERS.Schools) {  
-      // add a new popup when there is a school in focus on hover event,       
+    if (layer !== LAYERS.Schools) {
+      // add a new popup when there is a school in focus on hover event,
       map.on('mouseenter', layer, (e) => {
         if (schoolInFocus) {
-          hoverPopup = new mapboxgl.Popup()
-          hoverPopup.setLngLat(e.lngLat)
-              .setHTML(
+          hoverPopup = new mapboxgl.Popup();
+          hoverPopup
+            .setLngLat(e.lngLat)
+            .setHTML(
               '<b>Distance: 100</b> ' +
                 '<br><b>Estimated Cycling Time:</b> ' +
-                '<br><b>Estimated Walking Time:</b> ')
-              .addTo(map);
+                '<br><b>Estimated Walking Time:</b> ',
+            )
+            .addTo(map);
         }
-      })
+      });
 
       // when the mouse leaves the feature, removes the popup
       map.on('mouseleave', layer, (e) => {
         if (schoolInFocus) {
-          hoverPopup.remove()
+          hoverPopup.remove();
         }
-      })
+      });
     }
-  })
+  });
 }
 
 // ============================================================================
@@ -495,15 +495,15 @@ function addRoutePopUp(routeFeature, map) {
     )
     // set the pop up content to show the length and estimated travel time
     .setHTML(
-      '<p>Route Distance: ' +
+      '<b>Route Distance: </b>' +
         length.toFixed(2) +
-        'm</p> \
-      <p>Estimated Walking Time: ' +
+        'm <br> \
+      <b>Estimated Walking Time: </b>' +
         estWalkingTime.toFixed(2) +
-        'mins</p> \
-      <p>Estimated Cycling Time: ' +
+        'mins <br> \
+      <b>Estimated Cycling Time: </b>' +
         estCyclingTime.toFixed(2) +
-        'mins</p>',
+        'mins <br>',
     )
     .addTo(map);
 
@@ -687,5 +687,3 @@ function updateSchoolBufferVisibility(map) {
   // set the filter to show the buffers that are checked
   map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);
 }
-
-
