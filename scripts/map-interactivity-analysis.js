@@ -485,7 +485,7 @@ function addHoverPopUpEvents(map) {
     if (layer !== LAYERS.Schools) {
       // add a new popup when there is a school in focus on hover event,
       map.on('mouseenter', layer, (e) => {
-        if (schoolInFocus) {
+        if (isFocusMode) {
           hoverPopup = new mapboxgl.Popup();
           hoverPopup
             .setLngLat(e.lngLat)
@@ -500,7 +500,7 @@ function addHoverPopUpEvents(map) {
 
       // when the mouse leaves the feature, removes the popup
       map.on('mouseleave', layer, (e) => {
-        if (schoolInFocus) {
+        if (isFocusMode) {
           hoverPopup.remove();
         }
       });
