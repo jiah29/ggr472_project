@@ -226,11 +226,16 @@ body {
           display: inline-block; /* make sure that the toggles are in line with the labels */
           margin: 0 10px;
 
+          /* styling for the buffer toggle labels */
+          p {
+            display: inline;
+          }
+
+          /* styling for the buffer toggle switches */
           #cycle-buffer-icon {
             color: #ff0000;
             opacity: 0.75;
           }
-
           #walk-buffer-icon {
             color: #00ffff;
             opacity: 0.75;
