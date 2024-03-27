@@ -480,5 +480,5 @@ addSchoolBufferToggleEvent(map);
 addHighlightFeatureOnDblClickEvent(map);
 // add hover event listener to non-school layers when a school is in focus
 addHoverPopUpEvents(map);
-
+// add event listener to buffer distance sliders
 addBufferDistanceSlidersEvent(map);

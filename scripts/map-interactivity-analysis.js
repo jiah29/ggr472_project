@@ -239,6 +239,9 @@ function addSchoolBufferToggleEvent(map) {
     });
 }
 
+// Function to add event listener to buffer distance sliders
+// to update the buffer distance and label
+// map: mapbox map object to change the buffer size on
 function addBufferDistanceSlidersEvent(map) {
   document
     .getElementById('walking-buffer-slider')
