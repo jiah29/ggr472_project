@@ -66,6 +66,7 @@ var popupFeature = {
   'cycling-network': [],
   'pedestrian-network': [],
 };
+// variable to store the time for calculating walking and cycling buffer distances
 var walkBufferTime = 5;
 var cycleBufferTime = 5;
 
