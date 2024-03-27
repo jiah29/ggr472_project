@@ -52,6 +52,8 @@ var highlightFeature = {
 };
 // variable to store the current hover popup
 var hoverPopup;
+// variable to store the current timeout for showing the geocoder failure message
+var geocodeResultFailureTimeout;
 // variable to store popup shown for each layer feature
 var popupFeature = {
   schools: [],
@@ -293,12 +295,20 @@ function changeCursorToPointerOnHoverEvent(map) {
 // map: mapbox map object where the geocoder is used
 // geocoder: Geocoder object to add event listener to
 function addGeocoderResultEvent(map, geocoder) {
+  // instead of directly flying to the geocoded location, we will
+  // check if the school exists in the TDSB schools data source, and
+  // fly to the school if it exists in our data source
   geocoder.on('result', function (e) {
-    // check if the school layer in view has school name = the search text
-    schoolGeocoded = e.result.text;
-    result = map.queryRenderedFeatures({
-      filter: ['==', ['get', 'SCH_NAM3'], schoolGeocoded],
+    // query school source to find all schools with the same name
+    allSchools = map.querySourceFeatures('schools-data', {
+      sourceLayer: 'Toronto_District_School_Board-2h6tqy',
     });
+
+    // filter out the school with the same name as the geocoded school
+    schoolGeocoded = e.result.text;
+    result = allSchools.filter(
+      (school) => school.properties.SCH_NAM3 === schoolGeocoded,
+    );
 
     if (result.length > 0) {
       // result found, set the school in focus to the geocoded school and toggle school focus mode
@@ -671,7 +681,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
     document.getElementById('school-buffer-controls').style.display = 'none';
 
     // close indicator after 5 seconds
-    setTimeout(() => {
+    geocodeResultFailureTimeout = setTimeout(() => {
       document.getElementById(
         'school-focus-indicator-container',
       ).style.display = 'none';
@@ -679,6 +689,16 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
       document.getElementById('focus-close-button').style.display = 'inline';
     }, 10000);
   } else {
+    // if there is a pending timeout for showing geocoded failure message,
+    // need to clear it
+    if (geocodeResultFailureTimeout) {
+      clearTimeout(geocodeResultFailureTimeout);
+      // reset the timeout variable
+      geocodeResultFailureTimeout = null;
+      // need to show the close indicator button again
+      document.getElementById('focus-close-button').style.display = 'inline';
+    }
+
     // not showing failure message, so check if there is a school in focus
     if (isFocusMode) {
       // there is a school in focus, display the school focus indicator with the school name
