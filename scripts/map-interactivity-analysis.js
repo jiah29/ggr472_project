@@ -66,6 +66,9 @@ var popupFeature = {
   'cycling-network': [],
   'pedestrian-network': [],
 };
+// variable to store the time for calculating walking and cycling buffer distances
+var walkBufferTime = 5;
+var cycleBufferTime = 5;
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -237,6 +240,41 @@ function addSchoolBufferToggleEvent(map) {
     });
 }
 
+// Function to add event listener to buffer distance sliders
+// to update the buffer distance and label
+// map: mapbox map object to change the buffer size on
+function addBufferDistanceSlidersEvent(map) {
+  document
+    .getElementById('walking-buffer-slider')
+    .addEventListener('input', (e) => {
+      walkBufferTime = e.target.value;
+      // remove all school buffers from the map if any exists
+      // then add the new school buffer based on the new distance
+      if (bufferDataSource.features.length > 0) {
+        removeAllSchoolBuffers(map);
+        addSchoolBufferFeature(map, schoolInFocus);
+      }
+      // change label to show the new distance
+      document.getElementById('walk-buffer-label').innerHTML =
+        walkBufferTime + ' Minutes Walking Buffer';
+    });
+
+  document
+    .getElementById('cycling-buffer-slider')
+    .addEventListener('input', (e) => {
+      cycleBufferTime = e.target.value;
+      // remove all school buffers from the map if any exists
+      // then add the new school buffer based on the new distance
+      if (bufferDataSource.features.length > 0) {
+        removeAllSchoolBuffers(map);
+        addSchoolBufferFeature(map, schoolInFocus);
+      }
+      // change label to show the new distance
+      document.getElementById('cycle-buffer-label').innerHTML =
+        cycleBufferTime + ' Minutes Cycling Buffer';
+    });
+}
+
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
@@ -312,7 +350,8 @@ function addGeocoderResultEvent(map, geocoder) {
 
     if (result.length > 0) {
       // result found, set the school in focus to the geocoded school and toggle school focus mode
-      schoolInFocus = schoolGeocoded;
+      schoolInFocus = result[0];
+      isFocusMode = true;
       toggleSchoolFocusModeIndicator(map);
       // add the school buffer feature to the map
       addSchoolBufferFeature(map, result[0]);
@@ -359,7 +398,7 @@ function addZoomInToSchoolEventOnDblClick(map) {
       });
     }, 10);
     // set the school in focus to the school that was double clicked and toggle school focus mode
-    schoolInFocus = e.features[0].properties.SCH_NAM3;
+    schoolInFocus = e.features[0];
     isFocusMode = true;
     toggleSchoolFocusModeIndicator(map);
     // add the school buffer feature to the map
@@ -468,7 +507,19 @@ function addBikeSharePopupEvent(map) {
         const popup = new mapboxgl.Popup();
         popup
           .setLngLat(location)
-          .setHTML('<b>Bike Share Station:</b> ' + feature.properties.name)
+          .setHTML(
+            '<b>Bike Share Station:</b> ' +
+              feature.properties.name +
+              '<br>' +
+              '<b>Number of Bikes Available:</b> ' +
+              feature.properties.num_bikes_available +
+              '<br>' +
+              '<b>Number of Docks Available:</b> ' +
+              feature.properties.num_docks_available +
+              '<br>' +
+              '<b>Is Charging Station:</b> ' +
+              feature.properties.is_charging_station,
+          )
           .addTo(map);
         // store the popup in the popupFeature object
         popupFeature['bike-share-stations'].push(popup);
@@ -627,7 +678,7 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
     // need to fetch the current bike share data first and create
     // new GeoJSON features based on new data
     fetchCurrentBikeShareData().then((bikeShareData) => {
-      geojsonFeaturesList = bikeShareData.map((station) => {
+      const geojsonFeaturesList = bikeShareData.map((station) => {
         return {
           type: 'Feature',
           geometry: {
@@ -643,7 +694,7 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
         };
       });
       // create a new GeoJSON feature collection
-      geojsonFeaturesCollection = {
+      const geojsonFeaturesCollection = {
         type: 'FeatureCollection',
         features: geojsonFeaturesList,
       };
@@ -706,13 +757,17 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
         'school-focus-indicator-container',
       ).style.display = 'block';
       document.getElementById('school-in-focus').innerHTML =
-        'School in Focus: ' + schoolInFocus;
+        'School in Focus: ' + schoolInFocus.properties.SCH_NAM3;
 
       // show the school buffers controls
       document.getElementById('school-buffer-controls').style.display = 'block';
 
       // hide all other schools through filter
-      map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
+      map.setFilter(LAYERS.Schools, [
+        '==',
+        'SCH_NAM3',
+        schoolInFocus.properties.SCH_NAM3,
+      ]);
     } else {
       // otherwise, hide the school focus indicator
       document.getElementById(
@@ -734,12 +789,12 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
   // create a new buffer feature for walking and cycling
-  cycleBufferSize = CYCLING_SPEED * 5; // 5 minutes cycling buffer
+  cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
   cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
   });
   cycleBuffer.properties.TYPE = 'CYCLING-BUFFER';
-  walkBufferSize = WALKING_SPEED * 5; // 5 minutes walking buffer
+  walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
   walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });

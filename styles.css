@@ -195,8 +195,8 @@ body {
     width: 100%;
     z-index: 2;
 
-    /* styling for the buffer controls content */
-    #controls-switches {
+    /* styling for the buffer controls container */
+    #controls-container {
       position: relative;
       margin: auto;
       width: fit-content;
@@ -205,20 +205,41 @@ body {
       color: white;
       background-color: rgba(0, 0, 0, 0.75);
       text-align: center;
+      display: flex;
+      flex-direction: row;
 
-      /* make sure each switches is next to each other */
-      div {
-        display: inline-block;
+      /* styling for the buffer controls elements */
+      .controls {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
         margin: 0 10px;
 
-        #cycle-buffer-icon {
-          color: #ff0000;
-          opacity: 0.75;
+        /* styling for the buffer distance sliders */
+        .sliders {
+          width: 100%;
         }
 
-        #walk-buffer-icon {
-          color: #00ffff;
-          opacity: 0.75;
+        /* styling for buffer toggles */
+        .toggles {
+          display: inline-block; /* make sure that the toggles are in line with the labels */
+          margin: 0 10px;
+
+          /* styling for the buffer toggle labels */
+          p {
+            display: inline;
+          }
+
+          /* styling for the buffer toggle switches */
+          #cycle-buffer-icon {
+            color: #ff0000;
+            opacity: 0.75;
+          }
+          #walk-buffer-icon {
+            color: #00ffff;
+            opacity: 0.75;
+          }
         }
       }
     }
