@@ -468,7 +468,19 @@ function addBikeSharePopupEvent(map) {
         const popup = new mapboxgl.Popup();
         popup
           .setLngLat(location)
-          .setHTML('<b>Bike Share Station:</b> ' + feature.properties.name)
+          .setHTML(
+            '<b>Bike Share Station:</b> ' +
+              feature.properties.name +
+              '<br>' +
+              '<b>Number of Bikes Available:</b> ' +
+              feature.properties.num_bikes_available +
+              '<br>' +
+              '<b>Number of Docks Available:</b> ' +
+              feature.properties.num_docks_available +
+              '<br>' +
+              '<b>Is Charging Station:</b> ' +
+              feature.properties.is_charging_station,
+          )
           .addTo(map);
         // store the popup in the popupFeature object
         popupFeature['bike-share-stations'].push(popup);
@@ -627,7 +639,7 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
     // need to fetch the current bike share data first and create
     // new GeoJSON features based on new data
     fetchCurrentBikeShareData().then((bikeShareData) => {
-      geojsonFeaturesList = bikeShareData.map((station) => {
+      const geojsonFeaturesList = bikeShareData.map((station) => {
         return {
           type: 'Feature',
           geometry: {
@@ -643,7 +655,7 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
         };
       });
       // create a new GeoJSON feature collection
-      geojsonFeaturesCollection = {
+      const geojsonFeaturesCollection = {
         type: 'FeatureCollection',
         features: geojsonFeaturesList,
       };

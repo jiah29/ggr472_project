@@ -319,7 +319,9 @@ function fetchCurrentBikeShareData() {
     })
     .then(() => {
       // get the up-to-date availability and status data
-      fetch('https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status')
+      return fetch(
+        'https://tor.publicbikesystem.net/ube/gbfs/v1/en/station_status',
+      )
         .then((response) => response.json())
         .then((data) => {
           // for each station, find the corresponding bike share location
@@ -340,10 +342,10 @@ function fetchCurrentBikeShareData() {
                 location.is_charging_station;
             }
           });
+        })
+        .then(() => {
+          return bikeShareData;
         });
-    })
-    .then(() => {
-      return bikeShareData;
     });
 }
 
