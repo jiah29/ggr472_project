@@ -66,6 +66,8 @@ var popupFeature = {
   'cycling-network': [],
   'pedestrian-network': [],
 };
+var walkBufferTime = 5;
+var cycleBufferTime = 5;
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -237,6 +239,38 @@ function addSchoolBufferToggleEvent(map) {
     });
 }
 
+function addBufferDistanceSlidersEvent(map) {
+  document
+    .getElementById('walking-buffer-slider')
+    .addEventListener('input', (e) => {
+      walkBufferTime = e.target.value;
+      // remove all school buffers from the map if any exists
+      // then add the new school buffer based on the new distance
+      if (bufferDataSource.features.length > 0) {
+        removeAllSchoolBuffers(map);
+        addSchoolBufferFeature(map, schoolInFocus);
+      }
+      // change label to show the new distance
+      document.getElementById('walk-buffer-label').innerHTML =
+        walkBufferTime + ' Minutes Walking Buffer';
+    });
+
+  document
+    .getElementById('cycling-buffer-slider')
+    .addEventListener('input', (e) => {
+      cycleBufferTime = e.target.value;
+      // remove all school buffers from the map if any exists
+      // then add the new school buffer based on the new distance
+      if (bufferDataSource.features.length > 0) {
+        removeAllSchoolBuffers(map);
+        addSchoolBufferFeature(map, schoolInFocus);
+      }
+      // change label to show the new distance
+      document.getElementById('cycle-buffer-label').innerHTML =
+        cycleBufferTime + ' Minutes Cycling Buffer';
+    });
+}
+
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================
@@ -312,7 +346,7 @@ function addGeocoderResultEvent(map, geocoder) {
 
     if (result.length > 0) {
       // result found, set the school in focus to the geocoded school and toggle school focus mode
-      schoolInFocus = schoolGeocoded;
+      schoolInFocus = result[0];
       isFocusMode = true;
       toggleSchoolFocusModeIndicator(map);
       // add the school buffer feature to the map
@@ -360,7 +394,7 @@ function addZoomInToSchoolEventOnDblClick(map) {
       });
     }, 10);
     // set the school in focus to the school that was double clicked and toggle school focus mode
-    schoolInFocus = e.features[0].properties.SCH_NAM3;
+    schoolInFocus = e.features[0];
     isFocusMode = true;
     toggleSchoolFocusModeIndicator(map);
     // add the school buffer feature to the map
@@ -719,13 +753,17 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
         'school-focus-indicator-container',
       ).style.display = 'block';
       document.getElementById('school-in-focus').innerHTML =
-        'School in Focus: ' + schoolInFocus;
+        'School in Focus: ' + schoolInFocus.properties.SCH_NAM3;
 
       // show the school buffers controls
       document.getElementById('school-buffer-controls').style.display = 'block';
 
       // hide all other schools through filter
-      map.setFilter(LAYERS.Schools, ['==', 'SCH_NAM3', schoolInFocus]);
+      map.setFilter(LAYERS.Schools, [
+        '==',
+        'SCH_NAM3',
+        schoolInFocus.properties.SCH_NAM3,
+      ]);
     } else {
       // otherwise, hide the school focus indicator
       document.getElementById(
@@ -747,12 +785,12 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
   // create a new buffer feature for walking and cycling
-  cycleBufferSize = CYCLING_SPEED * 5; // 5 minutes cycling buffer
+  cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
   cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
   });
   cycleBuffer.properties.TYPE = 'CYCLING-BUFFER';
-  walkBufferSize = WALKING_SPEED * 5; // 5 minutes walking buffer
+  walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
   walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });

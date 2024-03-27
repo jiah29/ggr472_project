@@ -328,33 +328,69 @@
 
         <!-- Controls to turn on and off school buffers - created using Bootstrap template -->
         <div id="school-buffer-controls">
-          <div id="controls-switches">
+          <div id="controls-container">
             <!-- Walking buffer switch -->
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="walking-buffer-toggle"
-                checked
-              />
-              <label class="form-check-label" for="walking-buffer-toggle">
-                <i class="fa-solid fa-circle" id="walk-buffer-icon"></i>
-                5 Minutes Walking Buffer
-              </label>
+            <div id="walk-buffer-controls" class="controls">
+              <div class="form-check form-switch toggles">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="walking-buffer-toggle"
+                  checked
+                />
+                <label
+                  class="form-check-label"
+                  for="walking-buffer-toggle"
+                  id="walk-buffer-label"
+                >
+                  <i class="fa-solid fa-circle" id="walk-buffer-icon"></i>
+                  5 Minutes Walking Buffer
+                </label>
+              </div>
+              <!-- Slider to adjust the walking buffer distance -->
+              <div class="sliders">
+                <input
+                  type="range"
+                  class="form-range"
+                  id="walking-buffer-slider"
+                  min="5"
+                  max="30"
+                  step="5"
+                  value="5"
+                />
+              </div>
             </div>
             <!-- Cycling buffer switch -->
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="cycling-buffer-toggle"
-                checked
-              />
-              <label class="form-check-label" for="cycling-buffer-toggle">
-                <!-- a red circle with 50% transparency-->
-                <i class="fa-solid fa-circle" id="cycle-buffer-icon"></i>
-                5 Minutes Cycling Buffer
-              </label>
+            <div id="cycle-buffer-controls" class="controls">
+              <div class="form-check form-switch toggles">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="cycling-buffer-toggle"
+                  checked
+                />
+                <label
+                  class="form-check-label"
+                  for="cycling-buffer-toggle"
+                  id="cycle-buffer-label"
+                >
+                  <!-- a red circle with 50% transparency-->
+                  <i class="fa-solid fa-circle" id="cycle-buffer-icon"></i>
+                  5 Minutes Cycling Buffer
+                </label>
+              </div>
+              <!-- Slider to adjust the walking buffer distance -->
+              <div class="sliders">
+                <input
+                  type="range"
+                  class="form-range"
+                  id="cycling-buffer-slider"
+                  min="5"
+                  max="30"
+                  step="5"
+                  value="5"
+                />
+              </div>
             </div>
           </div>
         </div>
