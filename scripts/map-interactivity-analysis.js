@@ -313,6 +313,7 @@ function addGeocoderResultEvent(map, geocoder) {
     if (result.length > 0) {
       // result found, set the school in focus to the geocoded school and toggle school focus mode
       schoolInFocus = schoolGeocoded;
+      isFocusMode = true;
       toggleSchoolFocusModeIndicator(map);
       // add the school buffer feature to the map
       addSchoolBufferFeature(map, result[0]);
