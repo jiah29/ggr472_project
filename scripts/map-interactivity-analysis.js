@@ -581,13 +581,20 @@ function addHoverPopUpEvents(map) {
       // add a new popup when there is a school in focus on hover event,
       map.on('mouseenter', layer, (e) => {
         if (isFocusMode) {
+          const from = turf.point(schoolInFocus._geometry.coordinates);
+          const to = turf.point([e.lngLat.lng, e.lngLat.lat]);
+          const distance = turf.distance(from, to, {units: 'kilometers'});
+
+          const cycling_t = distance * 1000 / CYCLING_SPEED
+          const walking_t = distance * 1000 / WALKING_SPEED
+
           hoverPopup = new mapboxgl.Popup();
           hoverPopup
             .setLngLat(e.lngLat)
             .setHTML(
-              '<b>Distance: 100</b> ' +
-                '<br><b>Estimated Cycling Time:</b> ' +
-                '<br><b>Estimated Walking Time:</b> ',
+              '<b>Distance:</b> ' + distance.toFixed(2) +
+                'km<br>' + '<b>Estimated Cycling Time:</b> ' + cycling_t.toFixed(2) +
+                'mins<br>' + '<b>Estimated Walking Time:</b> ' + walking_t.toFixed(2) + 'mins',
             )
             .addTo(map);
         }
