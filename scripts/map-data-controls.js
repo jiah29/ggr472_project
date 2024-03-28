@@ -288,12 +288,20 @@ function addBuffersSourceAndLayer(visible) {
         'match',
         ['get', 'TYPE'],
         'WALKING-BUFFER',
-        '#00ffff',
+        '#FF8E9A',
         'CYCLING-BUFFER',
-        '#ff0000',
+        '#A4E2EC',
         '#000000', // if no match - should not reach here
       ],
-      'fill-opacity': 0.5,
+      'fill-opacity': [
+        'match',
+        ['get', 'TYPE'],
+        'WALKING-BUFFER',
+        0.4,
+        'CYCLING-BUFFER',
+        0.5,
+        1, // if no match - should not reach here
+      ],
     },
     layout: {
       visibility: visible ? 'visible' : 'none',

@@ -233,11 +233,11 @@ body {
 
           /* styling for the buffer toggle switches */
           #cycle-buffer-icon {
-            color: #ff0000;
+            color: #a4e2ec;
             opacity: 0.75;
           }
           #walk-buffer-icon {
-            color: #00ffff;
+            color: #ff8e9a;
             opacity: 0.75;
           }
         }
