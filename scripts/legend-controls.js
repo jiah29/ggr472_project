@@ -47,7 +47,7 @@ function toggleIconLegend(layer, visible) {
     legendItem.id = legendId;
 
     // if the layer is a walking bus stop layer, add "walking-bus" as a class
-    // walking bus stops are 'parks', 'subway-stations', and 'bike-share-stations'
+    // walkingBusLayers is a global variable defined in map-interactivity-analysis.js
     if (walkingBusLayers.includes(layer)) {
       legendItem.classList.add('walking-bus');
     }
