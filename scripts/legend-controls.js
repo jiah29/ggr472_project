@@ -41,10 +41,16 @@ function toggleIconLegend(layer, visible) {
         .removeChild(document.getElementById(legendId));
     }
   } else {
-    // create the legend itm
+    // create the legend item
     const legendItem = document.createElement('div');
     // give the legend item an id
     legendItem.id = legendId;
+
+    // if the layer is a walking bus stop layer, add "walking-bus" as a class
+    // walking bus stops are 'parks', 'subway-stations', and 'bike-share-stations'
+    if (walkingBusLayers.includes(layer)) {
+      legendItem.classList.add('walking-bus');
+    }
 
     // create a legend icon for the legend item
     const legendIcon = document.createElement('div');
@@ -150,6 +156,20 @@ function sortAndInsertLegendItem(legendItem) {
   // make legend visible if it is not already when there are legend items
   if (legendItems.length === 0 && legendItem.style.display !== 'block') {
     legend.style.display = 'block';
+  }
+
+  // if in school focus mode and layer has "walking-bus" class, insert at the top
+  // isFocusMode is a global variable defined in map-interactivity-analysis.js
+  if (isFocusMode && legendItem.classList.contains('walking-bus')) {
+    // add a star icon to the legend item
+    const star = document.createElement('i');
+    star.classList.add('fa-solid', 'fa-star');
+    star.style.color = 'gold';
+    star.style.marginRight = '5px';
+    legendItem.insertBefore(star, legendItem.firstChild);
+    // insert the legend item at the top
+    legend.insertBefore(legendItem, legendItems[0]);
+    return; // early return to prevent further sorting
   }
 
   if (!legendItem.id.includes('network')) {
