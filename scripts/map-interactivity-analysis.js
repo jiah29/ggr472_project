@@ -581,20 +581,36 @@ function addHoverPopUpEvents(map) {
       // add a new popup when there is a school in focus on hover event,
       map.on('mouseenter', layer, (e) => {
         if (isFocusMode) {
+          // calculate the distance from the school in focus to the hovered feature
           const from = turf.point(schoolInFocus._geometry.coordinates);
           const to = turf.point([e.lngLat.lng, e.lngLat.lat]);
-          const distance = turf.distance(from, to, {units: 'kilometers'});
+          const distance = turf.distance(from, to, { units: 'kilometers' });
 
-          const cycling_t = distance * 1000 / CYCLING_SPEED
-          const walking_t = distance * 1000 / WALKING_SPEED
+          // calculate the estimated cycling and walking time in minutes
+          const cycling_t = (distance * 1000) / CYCLING_SPEED;
+          const walking_t = (distance * 1000) / WALKING_SPEED;
 
+          // set the location of the popup to the hovered feature
+          // if it is a point feature, use the feature coordinates, otherwise use the hover location
+          const location =
+            e.features[0].geometry.type === 'Point'
+              ? e.features[0].geometry.coordinates
+              : e.lngLat;
+
+          // create a new popup object and add it to the map
           hoverPopup = new mapboxgl.Popup();
           hoverPopup
-            .setLngLat(e.lngLat)
+            .setLngLat(location)
             .setHTML(
-              '<b>Distance:</b> ' + distance.toFixed(2) +
-                'km<br>' + '<b>Estimated Cycling Time:</b> ' + cycling_t.toFixed(2) +
-                'mins<br>' + '<b>Estimated Walking Time:</b> ' + walking_t.toFixed(2) + 'mins',
+              '<b>Distance:</b> ' +
+                distance.toFixed(2) +
+                'km<br>' +
+                '<b>Estimated Cycling Time:</b> ' +
+                cycling_t.toFixed(2) +
+                'mins<br>' +
+                '<b>Estimated Walking Time:</b> ' +
+                walking_t.toFixed(2) +
+                'mins',
             )
             .addTo(map);
         }
