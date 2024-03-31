@@ -299,7 +299,7 @@ function addBuffersSourceAndLayer(visible) {
         'WALKING-BUFFER',
         0.4,
         'CYCLING-BUFFER',
-        0.5,
+        0.6,
         1, // if no match - should not reach here
       ],
     },
@@ -307,6 +307,9 @@ function addBuffersSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+
+  // move buffer layer under features
+  map.moveLayer('school-buffers-layer', 'schools');
 }
 
 // ============================================================================
