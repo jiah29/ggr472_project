@@ -288,12 +288,20 @@ function addBuffersSourceAndLayer(visible) {
         'match',
         ['get', 'TYPE'],
         'WALKING-BUFFER',
-        '#00ffff',
+        '#FF8E9A',
         'CYCLING-BUFFER',
-        '#ff0000',
+        '#A4E2EC',
         '#000000', // if no match - should not reach here
       ],
-      'fill-opacity': 0.5,
+      'fill-opacity': [
+        'match',
+        ['get', 'TYPE'],
+        'WALKING-BUFFER',
+        0.4,
+        'CYCLING-BUFFER',
+        0.5,
+        1, // if no match - should not reach here
+      ],
     },
     layout: {
       visibility: visible ? 'visible' : 'none',
@@ -356,9 +364,10 @@ function fetchCurrentBikeShareData() {
 // visible: true or false (used to determine if the layer should be visible by default)
 function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
   // convert the bike share data to a GeoJSON feature collection
-  const geojson = bikeShareData.map((station) => {
+  const geojson = bikeShareData.map((station, index) => {
     // map this function to each station in the bike share data array
     return {
+      id: index,
       type: 'Feature',
       geometry: {
         type: 'Point',

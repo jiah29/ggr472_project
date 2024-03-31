@@ -21,7 +21,6 @@ LAYERS = {
   CyclingNetwork: 'cycling-network',
   PedestrianNetwork: 'pedestrian-network',
 };
-
 // variable to store the school in focus (used in determining whether a school is in focus)
 var schoolInFocus = null;
 // variable to track if we are in school focus mode
@@ -69,6 +68,8 @@ var popupFeature = {
 // variable to store the time for calculating walking and cycling buffer distances
 var walkBufferTime = 5;
 var cycleBufferTime = 5;
+// variable to store all walking bus layers
+var walkingBusLayers = ['parks', 'subway-stations', 'bike-share-stations'];
 
 // ============================================================================
 // HTML Elements Events Interactivity
@@ -116,19 +117,8 @@ function closeSchoolFocusModeEvent(map) {
   document
     .getElementById('focus-close-button')
     .addEventListener('click', function () {
-      // reset the school in focus to null and isFocusMode to false
-      schoolInFocus = null;
-      isFocusMode = false;
-      toggleSchoolFocusModeIndicator(map);
-      // fly back to the original view
-      map.flyTo({
-        center: [-79.370729, 43.719518],
-        zoom: 10,
-      });
-      // remove all school buffers from the map if any exists
-      if (bufferDataSource.features.length > 0) {
-        removeAllSchoolBuffers(map);
-      }
+      // turn off school focus mode
+      turnOffSchoolFocusMode(map);
     });
 }
 
@@ -253,6 +243,8 @@ function addBufferDistanceSlidersEvent(map) {
       if (bufferDataSource.features.length > 0) {
         removeAllSchoolBuffers(map);
         addSchoolBufferFeature(map, schoolInFocus);
+        // need to update walking bus stops suggestions filter
+        updateWalkingBusSuggestionsFilter(map);
       }
       // change label to show the new distance
       document.getElementById('walk-buffer-label').innerHTML =
@@ -268,6 +260,8 @@ function addBufferDistanceSlidersEvent(map) {
       if (bufferDataSource.features.length > 0) {
         removeAllSchoolBuffers(map);
         addSchoolBufferFeature(map, schoolInFocus);
+        // need to update walking bus stops suggestions filter
+        updateWalkingBusSuggestionsFilter(map);
       }
       // change label to show the new distance
       document.getElementById('cycle-buffer-label').innerHTML =
@@ -349,17 +343,8 @@ function addGeocoderResultEvent(map, geocoder) {
     );
 
     if (result.length > 0) {
-      // result found, set the school in focus to the geocoded school and toggle school focus mode
-      schoolInFocus = result[0];
-      isFocusMode = true;
-      toggleSchoolFocusModeIndicator(map);
-      // add the school buffer feature to the map
-      addSchoolBufferFeature(map, result[0]);
-      // fly to the school using coordinates in data source instead of the geocoder result
-      map.flyTo({
-        center: result[0].geometry.coordinates,
-        zoom: 14,
-      });
+      // result found, turn on school focus mode
+      turnOnSchoolFocusMode(map, result[0]);
     } else {
       // if the school is not found, show the school focus mode indicator with failure message
       toggleSchoolFocusModeIndicator(map, (geocodeResultFailure = true));
@@ -368,7 +353,7 @@ function addGeocoderResultEvent(map, geocoder) {
         center: map.getCenter(),
         zoom: map.getZoom(),
       });
-      // remove existing school in focus if any and remove any school buffers
+      // remove existing school in focus and school buffers if any exists - just in case
       schoolInFocus = null;
       removeAllSchoolBuffers(map);
     }
@@ -386,23 +371,8 @@ function addZoomInToSchoolEventOnDblClick(map) {
   map.on('dblclick', LAYERS.Schools, function (e) {
     // set isDblClick to true to prevent triggering single click event
     isDblClick = true;
-    // get the coordinates of the school
-    var coordinates = e.features[0].geometry.coordinates;
-    // zoom in to the school
-    // putting this in a settimeout as a work around without disabling
-    // the default map double click zoom in behaviour
-    setTimeout(() => {
-      map.flyTo({
-        center: coordinates,
-        zoom: 14,
-      });
-    }, 10);
-    // set the school in focus to the school that was double clicked and toggle school focus mode
-    schoolInFocus = e.features[0];
-    isFocusMode = true;
-    toggleSchoolFocusModeIndicator(map);
-    // add the school buffer feature to the map
-    addSchoolBufferFeature(map, e.features[0]);
+    // turn on school focus mode
+    turnOnSchoolFocusMode(map, e.features[0]);
   });
 }
 
@@ -701,8 +671,9 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
     // need to fetch the current bike share data first and create
     // new GeoJSON features based on new data
     fetchCurrentBikeShareData().then((bikeShareData) => {
-      const geojsonFeaturesList = bikeShareData.map((station) => {
+      const geojsonFeaturesList = bikeShareData.map((station, index) => {
         return {
+          id: index,
           type: 'Feature',
           geometry: {
             type: 'Point',
@@ -811,17 +782,22 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // map: mapbox map object
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
-  // create a new buffer feature for walking and cycling
-  cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
-  cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
+  // create a new buffer feature for cycling
+  var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
+  var cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
   });
+  // Store buffer custom properties for reference later
   cycleBuffer.properties.TYPE = 'CYCLING-BUFFER';
-  walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
-  walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
+  cycleBuffer.properties.SIZE = cycleBufferSize;
+
+  // same for walking buffer
+  var walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
+  var walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });
   walkBuffer.properties.TYPE = 'WALKING-BUFFER';
+  walkBuffer.properties.SIZE = walkBufferSize;
 
   // add the buffers to the school buffers features data source
   // add cycling buffer first to avoid overlap with walking buffer
@@ -858,4 +834,165 @@ function updateSchoolBufferVisibility(map) {
   }
   // set the filter to show the buffers that are checked
   map.setFilter('school-buffers-layer', ['in', 'TYPE', ...visible]);
+}
+
+// Helper function to turn on school focus mode
+// map: mapbox map object to zoom in to the school
+// school: feature object representing the school to focus on
+function turnOnSchoolFocusMode(map, school) {
+  // zoom in to the school
+  // putting this in a settimeout as a work around without disabling
+  // the default map double click zoom in behaviour
+  setTimeout(() => {
+    map.flyTo({
+      center: school.geometry.coordinates,
+      zoom: 14,
+    });
+  }, 10);
+  // set the school in focus to the school that was double clicked and toggle school focus mode
+  schoolInFocus = school;
+  isFocusMode = true;
+  toggleSchoolFocusModeIndicator(map);
+  // add the school buffer feature to the map
+  addSchoolBufferFeature(map, school);
+  // show walking bus stops suggestions
+  showWalkingBusStopsSuggestions(map);
+}
+
+// Helper function to turn off school focus mode
+// map: mapbox map object to reset the view
+function turnOffSchoolFocusMode(map) {
+  // reset the school in focus to null and isFocusMode to false
+  schoolInFocus = null;
+  isFocusMode = false;
+  toggleSchoolFocusModeIndicator(map);
+  // fly back to the original view
+  map.flyTo({
+    center: [-79.370729, 43.719518],
+    zoom: 10,
+  });
+  // remove all school buffers from the map if any exists
+  if (bufferDataSource.features.length > 0) {
+    removeAllSchoolBuffers(map);
+  }
+  // hide walking bus stops suggestions
+  hideWalkingBusStopsSuggestions();
+}
+
+// Helper function to show walking bus stops suggestions
+function showWalkingBusStopsSuggestions(map) {
+  // unhide all walking bus stops layers
+  walkingBusLayers.forEach((layer) => {
+    // if layer is not turned on already, turn it on by simulating a click to the close icon
+    const openIcon = document.getElementById(layer + '-toggle').children[1];
+    const closeIcon = document.getElementById(layer + '-toggle').children[2];
+    if (openIcon.classList.contains('hidden')) {
+      closeIcon.click();
+    }
+
+    // create a new star icon to indicate walking bus stops in the sidebar
+    const starIcon = document.createElement('i');
+    starIcon.className = 'fas fa-star';
+    starIcon.style.color = 'gold';
+    starIcon.style.marginRight = '5px';
+    // insert the star icon to the beginning of the label of the layer in the sidebar
+    const sidebarItem = document.getElementById(layer + '-toggle');
+    const label = sidebarItem.children[0];
+    label.insertAdjacentElement('afterbegin', starIcon);
+  });
+
+  // update walking bus stops suggestions filter for the layer
+  // after 1 second to make sure the source features are loaded
+  setTimeout(() => {
+    updateWalkingBusSuggestionsFilter(map);
+  }, 1000);
+
+  // show the walking bus stop indicator in sidebar
+  const indicator = document.getElementById('walking-bus-indicator');
+  indicator.classList.remove('hidden');
+}
+
+// Helper function to hide walking bus stops suggestions
+function hideWalkingBusStopsSuggestions() {
+  // hide all walking bus stops layers
+  walkingBusLayers.forEach((layer) => {
+    // if layer is not turned off already, turn it off by simulating a click to the open icon
+    const openIcon = document.getElementById(layer + '-toggle').children[1];
+    const closeIcon = document.getElementById(layer + '-toggle').children[2];
+    if (closeIcon.classList.contains('hidden')) {
+      openIcon.click();
+    }
+
+    // remove the star icon from the label of the layer in the sidebar
+    const sidebarItem = document.getElementById(layer + '-toggle');
+    const label = sidebarItem.children[0];
+    label.removeChild(label.children[0]);
+
+    // remove the filter to show all features in the layer
+    map.setFilter(layer, null);
+  });
+
+  // hide the walking bus stop indicator in sidebar
+  const indicator = document.getElementById('walking-bus-indicator');
+  indicator.classList.add('hidden');
+}
+
+// Helper function to update the walking bus stops suggestions filter
+// for all walking bus stops layers
+// map: mapbox map object to update the filter on
+function updateWalkingBusSuggestionsFilter(map) {
+  walkingBusLayers.forEach((layer) => {
+    // find the larger buffer size
+    const bufferSizes = [
+      bufferDataSource.features[0].properties.SIZE,
+      bufferDataSource.features[1].properties.SIZE,
+    ];
+    var maxBufferSize = Math.max(...bufferSizes);
+
+    // differentiate between the different walking bus stops layer for querying the source features
+    const { sourceId, sourceLayer } = getSourceIDAndLayer(layer);
+
+    // set a timeout to query the source features after 1 second
+    // to make sure the source features are loaded
+    // Find all features in the layer
+    const features = map.querySourceFeatures(sourceId, {
+      sourceLayer: sourceLayer,
+    });
+
+    // variable to store the feature that are within the buffer
+    var featuresWithinBuffer = [];
+
+    // for each feature in the layer, calculate the distance from the school in focus
+    features.forEach((f) => {
+      const from = turf.point(schoolInFocus.geometry.coordinates);
+      const to = turf.point(f.geometry.coordinates);
+      const distance = turf.distance(from, to, { units: 'meters' });
+
+      // add the feature id to the list if it is within the buffer
+      if (distance <= maxBufferSize) {
+        featuresWithinBuffer.push(f.id);
+      }
+    });
+
+    // filter out the features that are within the buffer
+    map.setFilter(layer, ['in', '$id', ...featuresWithinBuffer]);
+  });
+}
+
+// Helper function to get the source id and source layer for a walking bus stops layer
+// layer: the layer id
+function getSourceIDAndLayer(layer) {
+  var sourceId;
+  var sourceLayer; // only applicable for vector maptiles
+  if (layer === 'parks') {
+    sourceId = 'parks-data';
+    sourceLayer = 'Parks_and_Recreation_Faciliti-6txiw4';
+  } else if (layer === 'subway-stations') {
+    sourceId = 'subway-stations-data';
+    sourceLayer = 'SubwayStops-2um6iw';
+  } else if (layer === 'bike-share-stations') {
+    sourceId = 'bike-share-data';
+    sourceLayer = null; // bike share stations geojson don't have a source layer
+  }
+  return { sourceId, sourceLayer };
 }

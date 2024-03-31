@@ -68,12 +68,26 @@ body {
         i {
           cursor: pointer; /* indicate that the icon is clickable */
         }
+      }
 
-        /** styling for sidebar items with hidden class attribute */
-        .hidden {
-          /* make sure that they are hidden, overriding any default display mode*/
-          display: none !important;
+      /* styling for the walking bus indicator in sidebar*/
+      #walking-bus-indicator {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+        font-weight: bold;
+
+        /** styling for the star icon */
+        i {
+          color: gold;
         }
+      }
+
+      /** styling for sidebar items with hidden class attribute */
+      .hidden {
+        /* make sure that they are hidden, overriding any default display mode*/
+        display: none !important;
       }
     }
 
@@ -233,11 +247,11 @@ body {
 
           /* styling for the buffer toggle switches */
           #cycle-buffer-icon {
-            color: #ff0000;
+            color: #a4e2ec;
             opacity: 0.75;
           }
           #walk-buffer-icon {
-            color: #00ffff;
+            color: #ff8e9a;
             opacity: 0.75;
           }
         }
