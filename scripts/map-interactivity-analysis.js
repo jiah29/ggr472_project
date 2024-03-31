@@ -243,6 +243,8 @@ function addBufferDistanceSlidersEvent(map) {
       if (bufferDataSource.features.length > 0) {
         removeAllSchoolBuffers(map);
         addSchoolBufferFeature(map, schoolInFocus);
+        // need to update walking bus stops suggestions filter
+        updateWalkingBusSuggestionsFilter(map);
       }
       // change label to show the new distance
       document.getElementById('walk-buffer-label').innerHTML =
@@ -258,6 +260,8 @@ function addBufferDistanceSlidersEvent(map) {
       if (bufferDataSource.features.length > 0) {
         removeAllSchoolBuffers(map);
         addSchoolBufferFeature(map, schoolInFocus);
+        // need to update walking bus stops suggestions filter
+        updateWalkingBusSuggestionsFilter(map);
       }
       // change label to show the new distance
       document.getElementById('cycle-buffer-label').innerHTML =
@@ -667,8 +671,9 @@ function toggleDynamicBikeShareLayerVisibility(map, visible) {
     // need to fetch the current bike share data first and create
     // new GeoJSON features based on new data
     fetchCurrentBikeShareData().then((bikeShareData) => {
-      const geojsonFeaturesList = bikeShareData.map((station) => {
+      const geojsonFeaturesList = bikeShareData.map((station, index) => {
         return {
+          id: index,
           type: 'Feature',
           geometry: {
             type: 'Point',
@@ -777,7 +782,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // map: mapbox map object
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
-  // create a new buffer feature for walking and cycling
+  // create a new buffer feature for cycling
   var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
   var cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
@@ -786,18 +791,19 @@ function addSchoolBufferFeature(map, schoolFeature) {
   cycleBuffer.properties.TYPE = 'CYCLING-BUFFER';
   cycleBuffer.properties.SIZE = cycleBufferSize;
 
+  // same for walking buffer
   var walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
   var walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });
   walkBuffer.properties.TYPE = 'WALKING-BUFFER';
   walkBuffer.properties.SIZE = walkBufferSize;
- 
+
   // add the buffers to the school buffers features data source
   // add cycling buffer first to avoid overlap with walking buffer
   bufferDataSource.features.push(cycleBuffer);
   bufferDataSource.features.push(walkBuffer);
- console.log(bufferDataSource)
+
   // set the new source data to be the updated buffer data source
   map.getSource('school-buffers').setData(bufferDataSource);
 }
@@ -893,44 +899,14 @@ function showWalkingBusStopsSuggestions(map) {
     const sidebarItem = document.getElementById(layer + '-toggle');
     const label = sidebarItem.children[0];
     label.insertAdjacentElement('afterbegin', starIcon);
-  
-    var sourceLayerVar;
-    var layerName;
-    if (layer === 'parks') {
-      layerName  = 'parks-data';
-      sourceLayerVar = 'Parks_and_Recreation_Faciliti-6txiw4';
-    } else if (layer === 'subway-stations') {
-      layerName = 'subway-stations-data';
-      sourceLayerVar = 'SubwayStops-2um6iw';
-    } else if (layer === 'bike-share-stations') {
-      layerName = 'bike-share-data'
-      sourceLayerVar = null  // bikeshare stations geojson don't have a source layer
-    }
-    setTimeout(() => {
-      // Find all features in the layer
-      const features = map.querySourceFeatures(layerName, {
-        sourceLayer: sourceLayerVar
-      }); 
-
-      // find the larger buffer size
-      const bufferSizes = [bufferDataSource.features[0].properties.SIZE, bufferDataSource.features[1].properties.SIZE]
-      var maxBufferSize = Math.max(...bufferSizes)
-
-      features.forEach((f) => {
-        const from = turf.point(schoolInFocus.geometry.coordinates);
-        const to = turf.point(f.geometry.coordinates);
-        const distance = turf.distance(from, to, { units: 'meters' });
-        f.properties.SCHOOL_DIST = distance
-        console.log(f)
-      })
-
-      map.setFilter(layer, ["<", "SCHOOL_DIST", maxBufferSize])
-
-
-    }, 1000)
-    
   });
-   
+
+  // update walking bus stops suggestions filter for the layer
+  // after 1 second to make sure the source features are loaded
+  setTimeout(() => {
+    updateWalkingBusSuggestionsFilter(map);
+  }, 1000);
+
   // show the walking bus stop indicator in sidebar
   const indicator = document.getElementById('walking-bus-indicator');
   indicator.classList.remove('hidden');
@@ -951,9 +927,72 @@ function hideWalkingBusStopsSuggestions() {
     const sidebarItem = document.getElementById(layer + '-toggle');
     const label = sidebarItem.children[0];
     label.removeChild(label.children[0]);
+
+    // remove the filter to show all features in the layer
+    map.setFilter(layer, null);
   });
 
   // hide the walking bus stop indicator in sidebar
   const indicator = document.getElementById('walking-bus-indicator');
   indicator.classList.add('hidden');
+}
+
+// Helper function to update the walking bus stops suggestions filter
+// for all walking bus stops layers
+// map: mapbox map object to update the filter on
+function updateWalkingBusSuggestionsFilter(map) {
+  walkingBusLayers.forEach((layer) => {
+    // find the larger buffer size
+    const bufferSizes = [
+      bufferDataSource.features[0].properties.SIZE,
+      bufferDataSource.features[1].properties.SIZE,
+    ];
+    var maxBufferSize = Math.max(...bufferSizes);
+
+    // differentiate between the different walking bus stops layer for querying the source features
+    const { sourceId, sourceLayer } = getSourceIDAndLayer(layer);
+
+    // set a timeout to query the source features after 1 second
+    // to make sure the source features are loaded
+    // Find all features in the layer
+    const features = map.querySourceFeatures(sourceId, {
+      sourceLayer: sourceLayer,
+    });
+
+    // variable to store the feature that are within the buffer
+    var featuresWithinBuffer = [];
+
+    // for each feature in the layer, calculate the distance from the school in focus
+    features.forEach((f) => {
+      const from = turf.point(schoolInFocus.geometry.coordinates);
+      const to = turf.point(f.geometry.coordinates);
+      const distance = turf.distance(from, to, { units: 'meters' });
+
+      // add the feature id to the list if it is within the buffer
+      if (distance <= maxBufferSize) {
+        featuresWithinBuffer.push(f.id);
+      }
+    });
+
+    // filter out the features that are within the buffer
+    map.setFilter(layer, ['in', '$id', ...featuresWithinBuffer]);
+  });
+}
+
+// Helper function to get the source id and source layer for a walking bus stops layer
+// layer: the layer id
+function getSourceIDAndLayer(layer) {
+  var sourceId;
+  var sourceLayer; // only applicable for vector maptiles
+  if (layer === 'parks') {
+    sourceId = 'parks-data';
+    sourceLayer = 'Parks_and_Recreation_Faciliti-6txiw4';
+  } else if (layer === 'subway-stations') {
+    sourceId = 'subway-stations-data';
+    sourceLayer = 'SubwayStops-2um6iw';
+  } else if (layer === 'bike-share-stations') {
+    sourceId = 'bike-share-data';
+    sourceLayer = null; // bike share stations geojson don't have a source layer
+  }
+  return { sourceId, sourceLayer };
 }

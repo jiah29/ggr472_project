@@ -364,9 +364,10 @@ function fetchCurrentBikeShareData() {
 // visible: true or false (used to determine if the layer should be visible by default)
 function addBikeShareStationsSourceAndLayer(bikeShareData, visible) {
   // convert the bike share data to a GeoJSON feature collection
-  const geojson = bikeShareData.map((station) => {
+  const geojson = bikeShareData.map((station, index) => {
     // map this function to each station in the bike share data array
     return {
+      id: index,
       type: 'Feature',
       geometry: {
         type: 'Point',
