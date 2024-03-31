@@ -299,7 +299,7 @@ function addBuffersSourceAndLayer(visible) {
         'WALKING-BUFFER',
         0.4,
         'CYCLING-BUFFER',
-        0.6,
+        0.5,
         1, // if no match - should not reach here
       ],
     },
