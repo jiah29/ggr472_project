@@ -783,7 +783,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
   // create a new buffer feature for cycling
-  var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
+  var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // calculate buffer distance
   var cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
   });
@@ -792,7 +792,7 @@ function addSchoolBufferFeature(map, schoolFeature) {
   cycleBuffer.properties.SIZE = cycleBufferSize;
 
   // same for walking buffer
-  var walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
+  var walkBufferSize = WALKING_SPEED * walkBufferTime;
   var walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });
