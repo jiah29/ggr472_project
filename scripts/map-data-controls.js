@@ -307,6 +307,9 @@ function addBuffersSourceAndLayer(visible) {
       visibility: visible ? 'visible' : 'none',
     },
   });
+
+  // move buffer layer under features
+  map.moveLayer('school-buffers-layer', 'schools');
 }
 
 // ============================================================================
