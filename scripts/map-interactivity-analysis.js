@@ -572,7 +572,9 @@ function addHoverPopUpEvents(map) {
           hoverPopup
             .setLngLat(location)
             .setHTML(
-              '<b>Distance:</b> ' +
+              '<b>Distance to ' +
+                schoolInFocus.properties.SCH_NAM3 +
+                ':</b> ' +
                 distance.toFixed(2) +
                 'km<br>' +
                 '<b>Estimated Cycling Time:</b> ' +
