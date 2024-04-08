@@ -269,6 +269,19 @@ function addBufferDistanceSlidersEvent(map) {
     });
 }
 
+// Function to open the welcome modal on page load
+function openWelcomeModal() {
+  // listen to DOMContentLoaded event to make sure the page is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    // get the welcome modal object and show it
+    var welcomeModal = new bootstrap.Modal(
+      document.getElementById('welcomeModal'),
+      {},
+    );
+    welcomeModal.show();
+  });
+}
+
 // ============================================================================
 // User Drawn Routes Feature Interactivity & Analysis
 // ============================================================================

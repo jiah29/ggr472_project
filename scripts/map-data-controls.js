@@ -496,3 +496,5 @@ addHighlightFeatureOnDblClickEvent(map);
 addHoverPopUpEvents(map);
 // add event listener to buffer distance sliders
 addBufferDistanceSlidersEvent(map);
+// add event listener to open welcome modal on page load
+openWelcomeModal();

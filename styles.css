@@ -10,6 +10,20 @@ body {
   height: 100vh;
   width: 100vw;
 
+  /** styling for the instruction note in the welcome modal */
+  #welcomeModal {
+    #note {
+      font-style: italic;
+      font-size: small;
+    }
+  }
+
+  /** styling for emphasis elements */
+  em {
+    font-style: italic;
+    font-weight: bold;
+  }
+
   /* styling for the navbar */
   .navbar {
     width: 100%;
