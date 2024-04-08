@@ -1,6 +1,6 @@
 // ============================================================================
-// Script used for index.html to set up interactivty and analysis features
-// on both HTML elements and map elements.
+// Script used to set up interactivity & analysis features on both HTML
+// elements and map elements. These functions are called in the master.js script.
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
@@ -271,7 +271,7 @@ function addBufferDistanceSlidersEvent(map) {
 }
 
 // Function to open the welcome modal on page load
-function openWelcomeModal() {
+function openWelcomeModalOnPageLoad() {
   // listen to DOMContentLoaded event to make sure the page is fully loaded
   document.addEventListener('DOMContentLoaded', function () {
     // get the welcome modal object and show it
