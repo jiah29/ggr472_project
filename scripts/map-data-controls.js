@@ -1,7 +1,7 @@
 // ============================================================================
-// The main script used for index.html to set up map controls and data layers,
-// as well as interactivity and analysis features defined and implemented in
-// map-interactivity-analysis.js and legend-controls.js.
+// Master script used for index.html to set up map, map controls and data layers.
+// It is also responsible for calling relevant legend controls and interactivity
+// and analysis functions defined in other JavaScript files.
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================

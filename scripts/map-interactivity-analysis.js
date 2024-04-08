@@ -1,5 +1,6 @@
 // ============================================================================
-// Script used for index.html to set up map interactivty and analysis features
+// Script used for index.html to set up interactivty and analysis features
+// on both HTML elements and map elements.
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
