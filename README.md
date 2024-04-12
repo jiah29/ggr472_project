@@ -24,7 +24,7 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 ### Visualize
 
 - **Showing and Hiding Layers**  
-    Toggle layers on or off through the sidebar using the eye (`eye`) or crossed-out eye (`eye-slash`) icons to display features of interest.  
+    Toggle layers on or off through the sidebar using the eye or crossed-out eye icons to display features of interest.  
 - **Want to Know More?**  
     Click on any feature to open a pop-up that provides detailed information about that feature.  
 - **Interested in a Specific School?**  
@@ -42,7 +42,7 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 - **Drawing an Active Travel Route**  
     Utilize the drawing tools (represented by a line drawing icon) at the bottom right of the map to draw your route. Click on the drawn route to see its total length and estimated traveling time.  
 - **Happy with Your Route?**  
-    Export your route map by clicking the print icon (`print`) at the bottom right of the map to save it as a PNG file.  
+    Export your route map by clicking the print icon at the bottom right of the map to save it as a PNG file.  
 
 ## Features
 
