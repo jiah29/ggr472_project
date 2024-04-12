@@ -37,12 +37,12 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 
 ### Plan
 
-- **Recording Features of Interest**
-    Double-click on non-school features that you want to include in your plan to highlight them for reference. Click on the marker again to remove it.
-- **Drawing an Active Travel Route**
-    Utilize the drawing tools (represented by a line drawing icon) at the bottom right of the map to draw your route. Click on the drawn route to see its total length and estimated traveling time.
-- **Happy with Your Route?**
-    Export your route map by clicking the print icon (`print`) at the bottom right of the map to save it as a PNG file.
+- **Recording Features of Interest**  
+    Double-click on non-school features that you want to include in your plan to highlight them for reference. Click on the marker again to remove it.  
+- **Drawing an Active Travel Route**  
+    Utilize the drawing tools (represented by a line drawing icon) at the bottom right of the map to draw your route. Click on the drawn route to see its total length and estimated traveling time.  
+- **Happy with Your Route?**  
+    Export your route map by clicking the print icon (`print`) at the bottom right of the map to save it as a PNG file.  
 
 ## Features
 
