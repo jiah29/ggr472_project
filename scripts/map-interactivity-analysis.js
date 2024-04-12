@@ -1,5 +1,6 @@
 // ============================================================================
-// Script used for index.html to set up map interactivty and analysis features
+// Script used to set up interactivity & analysis features on both HTML
+// elements and map elements. These functions are called in the master.js script.
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
@@ -267,6 +268,19 @@ function addBufferDistanceSlidersEvent(map) {
       document.getElementById('cycle-buffer-label').innerHTML =
         cycleBufferTime + ' Minutes Cycling Buffer';
     });
+}
+
+// Function to open the welcome modal on page load
+function openWelcomeModalOnPageLoad() {
+  // listen to DOMContentLoaded event to make sure the page is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    // get the welcome modal object and show it
+    var welcomeModal = new bootstrap.Modal(
+      document.getElementById('welcomeModal'),
+      {},
+    );
+    welcomeModal.show();
+  });
 }
 
 // ============================================================================
@@ -572,7 +586,9 @@ function addHoverPopUpEvents(map) {
           hoverPopup
             .setLngLat(location)
             .setHTML(
-              '<b>Distance:</b> ' +
+              '<b>Distance to ' +
+                schoolInFocus.properties.SCH_NAM3 +
+                ':</b> ' +
                 distance.toFixed(2) +
                 'km<br>' +
                 '<b>Estimated Cycling Time:</b> ' +
@@ -783,7 +799,7 @@ function toggleSchoolFocusModeIndicator(map, geocodeResultFailure = false) {
 // schoolFeature: feature object representing the school
 function addSchoolBufferFeature(map, schoolFeature) {
   // create a new buffer feature for cycling
-  var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // 5 minutes cycling buffer
+  var cycleBufferSize = CYCLING_SPEED * cycleBufferTime; // calculate buffer distance
   var cycleBuffer = turf.buffer(schoolFeature.geometry, cycleBufferSize, {
     units: 'meters',
   });
@@ -792,7 +808,7 @@ function addSchoolBufferFeature(map, schoolFeature) {
   cycleBuffer.properties.SIZE = cycleBufferSize;
 
   // same for walking buffer
-  var walkBufferSize = WALKING_SPEED * walkBufferTime; // 5 minutes walking buffer
+  var walkBufferSize = WALKING_SPEED * walkBufferTime;
   var walkBuffer = turf.buffer(schoolFeature.geometry, walkBufferSize, {
     units: 'meters',
   });
