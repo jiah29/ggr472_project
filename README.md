@@ -44,7 +44,7 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 - **Happy with Your Route?**  
     Export your route map by clicking the print icon at the bottom right of the map to save it as a PNG file.  
 
-# Features
+## Features
 
 ## Design
 The application consists of two main pages:
