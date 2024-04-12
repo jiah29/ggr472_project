@@ -23,17 +23,17 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 
 ### Visualize
 
-- **Showing and Hiding Layers**
-    Toggle layers on or off through the sidebar using the eye (`eye`) or crossed-out eye (`eye-slash`) icons to display features of interest.
-- **Want to Know More?**
-    Click on any feature to open a pop-up that provides detailed information about that feature.
-- **Interested in a Specific School?**
-    Use the search box in the navigation bar to find a target school, or double-click on the school point feature to zoom in and focus on that school.
-- **When Focusing on a School**
-    All other schools will be hidden from view.
-    Two buffers will appear around the school, indicating 10 minutes walking and cycling distances, respectively.
-    Walking bus stop suggestions (e.g., parks and bike share stations) within the buffer distance will be highlighted.
-    Hover over non-school features to see their distance and estimated traveling times to the focused school.
+- **Showing and Hiding Layers**  
+    Toggle layers on or off through the sidebar using the eye (`eye`) or crossed-out eye (`eye-slash`) icons to display features of interest.  
+- **Want to Know More?**  
+    Click on any feature to open a pop-up that provides detailed information about that feature.  
+- **Interested in a Specific School?**  
+    Use the search box in the navigation bar to find a target school, or double-click on the school point feature to zoom in and focus on that school.  
+- **When Focusing on a School**  
+    All other schools will be hidden from view.  
+    Two buffers will appear around the school, indicating 10 minutes walking and cycling distances, respectively.  
+    Walking bus stop suggestions (e.g., parks and bike share stations) within the buffer distance will be highlighted.  
+    Hover over non-school features to see their distance and estimated traveling times to the focused school.  
 
 ### Plan
 
