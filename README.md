@@ -5,7 +5,7 @@
 Link to Published Website: https://jiah29.github.io/ggr472_project/
 
 ## Overview
-Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitate active travel route planning for parents and guardians by integrating visualizations of relevant features and direct in-map route planning capabilities.
+Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitate active commute travel route planning for parents and guardians of TDSB schools by integrating visualizations of relevant features and direct in-map route planning capabilities.
 
 ## Repository Contents
 
