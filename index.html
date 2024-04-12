@@ -11,7 +11,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TDSB Active Travel</title>
+    <title>TDSB Active Travel Planner</title>
     <!-- Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -45,10 +45,66 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <!-- WELCOME MODAL USING BOOTSTRAP TEMPLATE - SHOWN BY DEFAULT ON PAGE LOAD -->
+    <div class="modal fade" id="welcomeModal" tabindex="-1">
+      <div
+        class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalTitle">
+              Welcome to the TDSB Active Travel Planner
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              The TDSB Active Travel Planner is a web map that allows you to
+              visualize relevant features around a school to inform and guide
+              your planning process for active school travel, either by walking
+              or cycling.
+            </div>
+            <br />
+            <div id="welcome-modal-buttons">
+              <!-- Button to enter the map by closing the modal -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                id="enter-map-button"
+              >
+                Get Started!
+              </button>
+              <!-- Button to open the instruction modal - align it right -->
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#instructionsModal"
+              >
+                Instructions*
+              </button>
+            </div>
+            <br />
+            <p id="note">
+              *Instructions are also accessible via the
+              <i class="fa-solid fa-circle-info"></i> icon next to the search
+              bar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- NAVBAR USING BOOTSTRAP TEMPLATE -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="./index.html">TDSB Active Travel</a>
+        <a class="navbar-brand" href="./index.html"
+          >TDSB Active Travel Planner</a
+        >
         <button
           class="navbar-toggler"
           type="button"
@@ -65,8 +121,7 @@
             </li>
           </ul>
 
-          <!-- Instruction modal using Bootstrap template -->
-          <!-- Icon that triggers modal -->
+          <!-- Icon that triggers instruction modal -->
           <i
             class="fa-solid fa-circle-info mb-3 mb-lg-0"
             data-bs-toggle="modal"
@@ -74,7 +129,7 @@
             id="modal-button"
           ></i>
 
-          <!-- Modal -->
+          <!-- INSTRUCTION MODAL USING BOOTSTRAP TEMPLATE  -->
           <div class="modal fade" id="instructionsModal" tabindex="-1">
             <div
               class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
@@ -82,7 +137,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="modalTitle">
-                    Using this web map
+                    Using the TDSB Active Travel Planner
                   </h1>
                   <button
                     type="button"
@@ -92,10 +147,8 @@
                 </div>
                 <div class="modal-body">
                   <div>
-                    The primary purpose of this web map is to allow you to
-                    visualize relevant features around a school to inform and
-                    guide your planning process for active school travel, either
-                    by walking or cycling.
+                    There are two main features of this web map:
+                    <em>Visualize</em> and <em>Plan</em>.
                   </div>
                   <hr />
                   <div>
@@ -112,7 +165,9 @@
                       <dt>Want to know more?</dt>
                       <dd>
                         - Click on a feature to open a pop-up with relevant
-                        information of the feature.
+                        information of the feature. This only works for school,
+                        parks, bike share stations, and subway stations
+                        features.
                       </dd>
 
                       <dt>Interested in a specific school?</dt>
@@ -128,8 +183,10 @@
                           <li>All other schools will be hidden from view.</li>
                           <li>
                             Two buffers around the school will show up,
-                            representing 10 minutes walking distance and cycling
-                            distance respectively.
+                            representing 5 minutes walking distance and cycling
+                            distance respectively. You may use the slider and
+                            toggles at the top of the map to adjust the buffer
+                            distances and turn the buffers on/off respectively.
                           </li>
                           <li>
                             All walking bus stop suggestions (such as parks and
@@ -405,9 +462,10 @@
     </div>
 
     <!-- Custom js -->
-    <script src="./scripts/legend-controls.js"></script>
     <script src="./scripts/map-interactivity-analysis.js"></script>
-    <script src="./scripts/map-data-controls.js"></script>
+    <script src="./scripts/legend-controls.js"></script>
+    <script src="./scripts/map-data.js"></script>
+    <script src="./scripts/master.js"></script>
     <!-- Bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

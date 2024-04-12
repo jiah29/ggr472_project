@@ -1,5 +1,7 @@
 // ============================================================================
-// Script used for index.html to control legend items on the map
+// Script used to control map legend items. These functions are called by
+// relevant functions in map-interactivity-analysis.js and map-data.js that
+// control the visibility of map layers.
 // Created by Jia Hao Choo, Runyi Li & Saning Zhang
 // for GGR472 TDSB Active Travel Sandbox Project (Winter 2024)
 // ============================================================================
