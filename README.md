@@ -1,6 +1,6 @@
 # GGR472 Project - TDSB Active Travel Sandbox Initiative (Winter 2024)
 
-## By Jia Hao Choo, Runyi Li & Saning Zhang
+### By Jia Hao Choo, Runyi Li & Saning Zhang
 
 Link to Published Website: https://jiah29.github.io/ggr472_project/
 
@@ -44,9 +44,9 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 - **Happy with Your Route?**  
     Export your route map by clicking the print icon at the bottom right of the map to save it as a PNG file.  
 
-## Features
+# Features
 
-### Design
+## Design
 The application consists of two main pages:
 - **Map Page (Default Landing Page)**
   - **Navbar:** Contains the title, a link to the "Resources" page, an info with clicking it showing the icon instruction modal, and a search bar specific to school searches. 
@@ -59,7 +59,7 @@ The application consists of two main pages:
   - **Navbar:** Identical to the Map page for consistency.
   - **Main Body:** Detailing the benefits of active travel and the drawbacks of using private vehicles. Links to official Active School Travel websites and related resources are also included.
 
-### Interactivity
+## Interactivity
 - **Layer Interactivity:** Users can toggle map layers on and off through the sidebar.
 - **Feature Interaction:** Clicking on features such as schools or parks opens a pop-up with relevant information, e.g. the name and address of that feature.
 - **Search and Focus:** Users can search for schools by name in search bar, or look for it mannually on map. They can also double click on a school to focus it in a zoom-in view. Focusing on a school will hide other schools and show specific routes and stops.
@@ -68,12 +68,12 @@ The application consists of two main pages:
 - **Highlight and Right-Click Functionality:** Double-clicking on a non-school feature allows users to mark features, aiding in route planning.
 - **Export Options:** When done routes planning, maps can be exported as PNG files.
 
-### Analysis Tools
+## Analysis Tools
 - **Buffer Zones:** Automatically draw walking and cycling buffer zones around selected schools based on given traveling time.
 - **Route Distance Calculations:** Calculate distances and estimated travel times for the drawn route, provide these infomations in a clicking-open pop-up.
 - **Feature Distance Calculations:** Calculate distances and estimated travel times from a non-school feature to the focused school, provide these infomations in a hovering-open pop-up. This only shows in zoom-in view, when a school is in focus.
 - **Dynamic Buffer Adjustment:** Users can manually adjust buffer sizes based on adjusting maximum walking/cycling times.
 
----
+## Contributions
 
 This website was created by Jia Hao Choo, Saning Zhang, and Runyi Li for the GGR472 Course Project in Winter 2024. The project was completed in collaboration with Toronto District School Board (TDSB) as part of the Sandbox Initiative in the Faculty of Arts and Sciences at the University of Toronto.
