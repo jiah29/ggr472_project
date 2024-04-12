@@ -10,10 +10,10 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 ## Repository Contents
 
 - `index.html`: HTML file for the map (main) page, containing code for instruction modal, navbar and sidebar
-- `resources.html`: JavaScript file for the resources page
+- `resources.html`: HTML file for the resources page
 - `styles.css`: CSS file for styling the map and resources page
-- `scripts folder`:
-    - `master.js`: JavaScript file containing code to set up web page functionalities as well as setting up the map with the required map controls.
+- `scripts` folder:
+    - `master.js`: JavaScript file containing code to set up web page functionalities as well as setting up the map with the required map controls. It is also responsible for calling relevant functions in other scripts to add map data and set up all interactivity and analysis features.
     - `map-interactivity-analysis.js`: JavaScript file containing code implementing interactivity & analysis features on both HTML elements and map elements
     - `map-data.js`: JavaScript file containing code to add map data sources and layers to the map
     - `legend-controls.js`: JavaScript file containing code to control the visibility of map layers
