@@ -24,30 +24,25 @@ Welcome to the GGR472 Sandbox Project repository! This web map aims to facilitat
 ### Visualize
 
 - **Showing and Hiding Layers**
-  - Toggle layers on or off through the sidebar using the eye (`eye`) or crossed-out eye (`eye-slash`) icons to display features of interest.
-
+    Toggle layers on or off through the sidebar using the eye (`eye`) or crossed-out eye (`eye-slash`) icons to display features of interest.
 - **Want to Know More?**
-  - Click on any feature to open a pop-up that provides detailed information about that feature.
-
+    Click on any feature to open a pop-up that provides detailed information about that feature.
 - **Interested in a Specific School?**
-  - Use the search box in the navigation bar to find a target school, or double-click on the school point feature to zoom in and focus on that school.
-
+    Use the search box in the navigation bar to find a target school, or double-click on the school point feature to zoom in and focus on that school.
 - **When Focusing on a School**
-  - All other schools will be hidden from view.
-  - Two buffers will appear around the school, indicating 10 minutes walking and cycling distances, respectively.
-  - Walking bus stop suggestions (e.g., parks and bike share stations) within the buffer distance will be highlighted.
-  - Hover over non-school features to see their distance and estimated traveling times to the focused school.
+    All other schools will be hidden from view.
+    Two buffers will appear around the school, indicating 10 minutes walking and cycling distances, respectively.
+    Walking bus stop suggestions (e.g., parks and bike share stations) within the buffer distance will be highlighted.
+    Hover over non-school features to see their distance and estimated traveling times to the focused school.
 
 ### Plan
 
 - **Recording Features of Interest**
-  - Double-click on non-school features that you want to include in your plan to highlight them for reference. Click on the marker again to remove it.
-
+    Double-click on non-school features that you want to include in your plan to highlight them for reference. Click on the marker again to remove it.
 - **Drawing an Active Travel Route**
-  - Utilize the drawing tools (represented by a line drawing icon) at the bottom right of the map to draw your route. Click on the drawn route to see its total length and estimated traveling time.
-
+    Utilize the drawing tools (represented by a line drawing icon) at the bottom right of the map to draw your route. Click on the drawn route to see its total length and estimated traveling time.
 - **Happy with Your Route?**
-  - Export your route map by clicking the print icon (`print`) at the bottom right of the map to save it as a PNG file.
+    Export your route map by clicking the print icon (`print`) at the bottom right of the map to save it as a PNG file.
 
 ## Features
 
