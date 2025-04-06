@@ -1,3 +1,6 @@
+> [!NOTE]
+> This is a copy of https://github.com/jiah29/TDSB-Active-Travel-Webmap and is only used to maintain the old published webpage link of https://jiah29.github.io/ggr472_project/. This repo will not be updated.
+
 # GGR472 Project - TDSB Active Travel Sandbox Initiative (Winter 2024)
 
 ### By Jia Hao Choo, Runyi Li & Saning Zhang
